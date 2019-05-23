@@ -1,1 +1,0 @@
-cases/StatelessComponentWithoutLifecycle-ReactTemplate.cmi :
