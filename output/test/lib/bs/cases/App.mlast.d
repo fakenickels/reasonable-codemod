@@ -1,0 +1,9 @@
+cases/App-ReactTemplate.cmj :
+cases/MultiModules-ReactTemplate.cmj
+cases/MultiModules-ReactTemplate.cmi
+cases/ReducerComponent-ReactTemplate.cmj
+cases/ReducerComponent-ReactTemplate.cmi
+cases/ReducerComponentWithChildren-ReactTemplate.cmj
+cases/ReducerComponentWithChildren-ReactTemplate.cmi
+cases/StatelessComponent-ReactTemplate.cmj
+cases/StatelessComponent-ReactTemplate.cmi

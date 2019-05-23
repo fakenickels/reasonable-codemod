@@ -1,0 +1,1 @@
+cases/ReducerComponentWithChildren-ReactTemplate.cmi :

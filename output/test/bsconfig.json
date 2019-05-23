@@ -1,0 +1,18 @@
+{
+  "name": "react-template",
+  "sources": {
+    "dir": "cases",
+    "subdirs": true
+  },
+  "package-specs": [
+    {
+      "module": "commonjs",
+      "in-source": true
+    }
+  ],
+  "suffix": ".bs.js",
+  "namespace": true,
+  "bs-dependencies": ["reason-react", "reason-react-compat"],
+  "refmt": 3,
+  "reason": {"react-jsx": 3}
+}
