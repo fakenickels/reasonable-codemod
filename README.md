@@ -35,7 +35,7 @@ again with the same simple `esy` command.
 And test compiled executable (runs `scripts.tests` specified in
 `package.json`):
 
-    % esy test
+    % REASON_NATIVE_ROOT=. esy test
 
 Documentation for the libraries in the project can be generated with:
 
