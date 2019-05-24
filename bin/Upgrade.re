@@ -1,1 +1,1 @@
-include Lib.Migrate;
+Lib.Migrate.main();

@@ -16,54 +16,6 @@ module StringArrayMap =
     let compare = compare;
   });
 
-module Filename = {
-  let is_dir_sep = (s, i) => s.[i] == '/';
-
-  let extension_len = name => {
-    let rec check = (i0, i) =>
-      if (i < 0 || is_dir_sep(name, i)) {
-        0;
-      } else if (name.[i] == '.') {
-        check(i0, i - 1);
-      } else {
-        String.length(name) - i0;
-      };
-    let rec search_dot = i =>
-      if (i < 0 || is_dir_sep(name, i)) {
-        0;
-      } else if (name.[i] == '.') {
-        check(i, i - 1);
-      } else {
-        search_dot(i - 1);
-      };
-    search_dot(String.length(name) - 1);
-  };
-  let extension = name => {
-    let l = extension_len(name);
-    if (l == 0) {
-      "";
-    } else {
-      String.sub(name, String.length(name) - l, l);
-    };
-  };
-  let chop_extension = name => {
-    let l = extension_len(name);
-    if (l == 0) {
-      invalid_arg("Filename.chop_extension");
-    } else {
-      String.sub(name, 0, String.length(name) - l);
-    };
-  };
-  let remove_extension = name => {
-    let l = extension_len(name);
-    if (l == 0) {
-      name;
-    } else {
-      String.sub(name, 0, String.length(name) - l);
-    };
-  };
-};
-
 let printModuleLocation =
   fun
   | TopLevel => "TopLevel"
@@ -680,26 +632,6 @@ let transform = (args, fileName) =>
           implementationRefactorMapper,
           ast,
         );
-      /* Uncomment for debug */
-      /*
-       childrenUsageMap
-       |. MutableMap.forEach((key, value) =>
-            switch (key) {
-            | TopLevel =>
-              value ?
-                print_endline("TopLevel.make used children") :
-                print_endline("TopLevel.make didn't use children")
-            | Nested(keys) =>
-              let moduleName =
-                keys
-                |. Array.reduce("", (acc, value) =>
-                     (acc == "" ? acc : acc ++ ".") ++ value
-                   );
-              value ?
-                print_endline(moduleName ++ ".make used children") :
-                print_endline(moduleName ++ ".make didn't use children");
-            }
-          ); */
       let target = outputDir ++ file ++ ".re";
       let oc = open_out_bin(target);
       if (Sys.file_exists(file ++ ".rei")) {
@@ -736,11 +668,11 @@ let transform = (args, fileName) =>
     let file = fileName |> Filename.remove_extension;
     let target = outputDir ++ file ++ ".re";
     print_endline({js|❗️️ Errored on |js} ++ target);
-    print_endline(Printexc.to_string(error));
-    Printexc.print_backtrace(stdout);
+    let err = Printexc.to_string(error);
+    print_endline(err);
   };
 
-let main = () =>
+let main = () => {
   switch (Sys.argv) {
   | [||]
   | [|"help" | "-help" | "--help"|] =>
@@ -749,7 +681,6 @@ let main = () =>
     print_endline("Usage: find src/**/*.re | migrate");
     print_endline("Usage: pass a list of .re files you'd like to convert.");
   | args =>
-    Printexc.record_backtrace(true);
     read()
     |> StringSet.filter(item => Filename.extension(item) == ".re")
     /* Uncomment next line for debug */
@@ -757,5 +688,4 @@ let main = () =>
     |> StringSet.iter(transform(args));
     print_endline("Done!");
   };
-
-main();
+};

@@ -4,7 +4,7 @@
   "description": "An alternative upgrade script to ReasonReact 0.7.0",
   "license": "MIT",
   "esy": {
-    "build": "refmterr dune build -p #{self.name}",
+    "build": "refmterr dune build",
     "NOTE": "Optional release Section. Customizes result of `esy release`",
     "release": {
       "bin": [
@@ -21,7 +21,7 @@
     "doc": "esy dune build @doc"
   },
   "dependencies": {
-    "@opam/dune": "*",
+    "@opam/dune": "^1.9.3",
     "@reason-native/console": "*",
     "@reason-native/pastel": "*",
     "@reason-native/rely": "*",
