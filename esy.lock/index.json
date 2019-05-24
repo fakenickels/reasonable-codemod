@@ -1,6 +1,6 @@
 {
-  "checksum": "a01ff0ae48c9d90c678f6c8af6192218",
-  "root": "hello-reason@link-dev:./package.json",
+  "checksum": "adf1154e3a92479eec60efb3fbe5ad36",
+  "root": "bloodyowl-upgrade-reason-react@link-dev:./package.json",
   "node": {
     "refmterr@3.1.10@d41d8cd9": {
       "id": "refmterr@3.1.10@d41d8cd9",
@@ -33,9 +33,9 @@
       "dependencies": [],
       "devDependencies": []
     },
-    "hello-reason@link-dev:./package.json": {
-      "id": "hello-reason@link-dev:./package.json",
-      "name": "hello-reason",
+    "bloodyowl-upgrade-reason-react@link-dev:./package.json": {
+      "id": "bloodyowl-upgrade-reason-react@link-dev:./package.json",
+      "name": "bloodyowl-upgrade-reason-react",
       "version": "link-dev:./package.json",
       "source": {
         "type": "link-dev",

@@ -1,1 +1,0 @@
-cases/StatelessComponentWithChildren-ReactTemplate.cmi :

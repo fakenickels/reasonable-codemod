@@ -16,54 +16,6 @@ module StringArrayMap =
     let compare = compare;
   });
 
-module Filename = {
-  let is_dir_sep = (s, i) => s.[i] == '/';
-
-  let extension_len = name => {
-    let rec check = (i0, i) =>
-      if (i < 0 || is_dir_sep(name, i)) {
-        0;
-      } else if (name.[i] == '.') {
-        check(i0, i - 1);
-      } else {
-        String.length(name) - i0;
-      };
-    let rec search_dot = i =>
-      if (i < 0 || is_dir_sep(name, i)) {
-        0;
-      } else if (name.[i] == '.') {
-        check(i, i - 1);
-      } else {
-        search_dot(i - 1);
-      };
-    search_dot(String.length(name) - 1);
-  };
-  let extension = name => {
-    let l = extension_len(name);
-    if (l == 0) {
-      "";
-    } else {
-      String.sub(name, String.length(name) - l, l);
-    };
-  };
-  let chop_extension = name => {
-    let l = extension_len(name);
-    if (l == 0) {
-      invalid_arg("Filename.chop_extension");
-    } else {
-      String.sub(name, 0, String.length(name) - l);
-    };
-  };
-  let remove_extension = name => {
-    let l = extension_len(name);
-    if (l == 0) {
-      name;
-    } else {
-      String.sub(name, 0, String.length(name) - l);
-    };
-  };
-};
-
 let printModuleLocation =
   fun
   | TopLevel => "TopLevel"
@@ -396,15 +348,12 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
               ...value,
               pvb_expr: body,
               pvb_attributes:
-                foundReturnComponent^
-                  ? [
-                    (
-                      {txt: "react.component", loc: Location.none},
-                      PStr([]),
-                    ),
+                foundReturnComponent^ ?
+                  [
+                    ({txt: "react.component", loc: Location.none}, PStr([])),
                     ...value.pvb_attributes,
-                  ]
-                  : value.pvb_attributes,
+                  ] :
+                  value.pvb_attributes,
             },
           ],
         ),
@@ -545,11 +494,7 @@ let rec interfaceMapSignatureItem = (key, mapper, item) =>
           }
         | Ptyp_arrow(Nolabel, arg, coreType) =>
           switch (
-            try (
-              {
-                Some(childrenUsageMap.contents |> StringArrayMap.find(key));
-              }
-            ) {
+            try (Some(childrenUsageMap.contents |> StringArrayMap.find(key))) {
             | _ => None
             }
           ) {
@@ -672,7 +617,62 @@ let read = () => {
   set^;
 };
 
-let main = () =>
+let transform = (args, fileName) =>
+  try (
+    {
+      let outputDir =
+        args |> Array.exists(item => item == "--demo") ? "output/" : "";
+      let file = fileName |> Filename.remove_extension;
+      let ic = open_in_bin(file ++ ".re");
+      let lexbuf = Lexing.from_channel(ic);
+      let (ast, comments) =
+        Reason_toolchain.RE.implementation_with_comments(lexbuf);
+      let newAst =
+        implementationRefactorMapper.structure(
+          implementationRefactorMapper,
+          ast,
+        );
+      let target = outputDir ++ file ++ ".re";
+      let oc = open_out_bin(target);
+      if (Sys.file_exists(file ++ ".rei")) {
+        let ic = open_in_bin(file ++ ".rei");
+        let lexbuf = Lexing.from_channel(ic);
+        let (ast, comments) =
+          Reason_toolchain.RE.interface_with_comments(lexbuf);
+        let newAst =
+          interfaceRefactorMapper.signature(interfaceRefactorMapper, ast);
+        let target = outputDir ++ file ++ ".rei";
+        let oc = open_out_bin(target);
+        let formatter = Format.formatter_of_out_channel(oc);
+        Reason_toolchain.RE.print_interface_with_comments(
+          formatter,
+          (newAst, comments),
+        );
+        Format.print_flush();
+        print_endline({js|✅ Done |js} ++ target);
+        close_out(oc);
+      };
+      let formatter = Format.formatter_of_out_channel(oc);
+      Reason_toolchain.RE.print_implementation_with_comments(
+        formatter,
+        (newAst, comments),
+      );
+      Format.print_flush();
+      print_endline({js|✅ Done |js} ++ target);
+      close_out(oc);
+    }
+  ) {
+  | error =>
+    let outputDir =
+      args |> Array.exists(item => item == "--demo") ? "output/" : "";
+    let file = fileName |> Filename.remove_extension;
+    let target = outputDir ++ file ++ ".re";
+    print_endline({js|❗️️ Errored on |js} ++ target);
+    let err = Printexc.to_string(error);
+    print_endline(err);
+  };
+
+let main = () => {
   switch (Sys.argv) {
   | [||]
   | [|"help" | "-help" | "--help"|] =>
@@ -681,94 +681,11 @@ let main = () =>
     print_endline("Usage: find src/**/*.re | migrate");
     print_endline("Usage: pass a list of .re files you'd like to convert.");
   | args =>
-    Printexc.record_backtrace(true);
     read()
     |> StringSet.filter(item => Filename.extension(item) == ".re")
     /* Uncomment next line for debug */
     /* && ! String.contains(item, '_') */
-    |> StringSet.iter(fileName =>
-         try (
-           {
-             let outputDir =
-               args |> Array.exists(item => item == "--demo") ? "output/" : "";
-             let file = fileName |> Filename.remove_extension;
-             let ic = open_in_bin(file ++ ".re");
-             let lexbuf = Lexing.from_channel(ic);
-             let (ast, comments) =
-               Reason_toolchain.RE.implementation_with_comments(
-                 lexbuf,
-               );
-             let newAst =
-               implementationRefactorMapper.structure(
-                 implementationRefactorMapper,
-                 ast,
-               );
-             /* Uncomment for debug */
-             /*
-              childrenUsageMap
-              |. MutableMap.forEach((key, value) =>
-                   switch (key) {
-                   | TopLevel =>
-                     value ?
-                       print_endline("TopLevel.make used children") :
-                       print_endline("TopLevel.make didn't use children")
-                   | Nested(keys) =>
-                     let moduleName =
-                       keys
-                       |. Array.reduce("", (acc, value) =>
-                            (acc == "" ? acc : acc ++ ".") ++ value
-                          );
-                     value ?
-                       print_endline(moduleName ++ ".make used children") :
-                       print_endline(moduleName ++ ".make didn't use children");
-                   }
-                 ); */
-             let target = outputDir ++ file ++ ".re";
-             let oc = open_out_bin(target);
-             if (Sys.file_exists(file ++ ".rei")) {
-               let ic = open_in_bin(file ++ ".rei");
-               let lexbuf = Lexing.from_channel(ic);
-               let (ast, comments) =
-                 Reason_toolchain.RE.interface_with_comments(
-                   lexbuf,
-                 );
-               let newAst =
-                 interfaceRefactorMapper.signature(
-                   interfaceRefactorMapper,
-                   ast,
-                 );
-               let target = outputDir ++ file ++ ".rei";
-               let oc = open_out_bin(target);
-               let formatter = Format.formatter_of_out_channel(oc);
-               Reason_toolchain.RE.print_interface_with_comments(
-                 formatter,
-                 (newAst, comments),
-               );
-               Format.print_flush();
-               print_endline({js|✅ Done |js} ++ target);
-               close_out(oc);
-             };
-             let formatter = Format.formatter_of_out_channel(oc);
-             Reason_toolchain.RE.print_implementation_with_comments(
-               formatter,
-               (newAst, comments),
-             );
-             Format.print_flush();
-             print_endline({js|✅ Done |js} ++ target);
-             close_out(oc);
-           }
-         ) {
-         | error =>
-           let outputDir =
-             args |> Array.exists(item => item == "--demo") ? "output/" : "";
-           let file = fileName |> Filename.remove_extension;
-           let target = outputDir ++ file ++ ".re";
-           print_endline({js|❗️️ Errored on |js} ++ target);
-           print_endline(Printexc.to_string(error));
-           Printexc.print_backtrace(stdout);
-         }
-       );
+    |> StringSet.iter(transform(args));
     print_endline("Done!");
   };
-
-main();
+};

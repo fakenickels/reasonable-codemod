@@ -1,0 +1,1 @@
+Lib.Migrate.main();

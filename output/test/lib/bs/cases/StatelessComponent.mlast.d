@@ -1,1 +1,0 @@
-cases/StatelessComponent-ReactTemplate.cmj :
