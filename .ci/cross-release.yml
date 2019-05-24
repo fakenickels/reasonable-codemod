@@ -32,3 +32,9 @@ steps:
     inputs:
       PathtoPublish: "_release"
       ArtifactName: Release
+  - task: Npm@1
+    displayName: "Publish To NPM"
+    inputs:
+      command: publish
+      publishRegistry: useExternalRegistry
+      publishEndpoint: https://registry.npmjs.org
