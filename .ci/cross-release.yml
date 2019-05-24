@@ -37,4 +37,4 @@ steps:
     inputs:
       command: publish
       publishRegistry: useExternalRegistry
-      publishEndpoint: https://registry.npmjs.org
+      publishEndpoint: Npm
