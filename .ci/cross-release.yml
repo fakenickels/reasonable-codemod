@@ -36,5 +36,6 @@ steps:
     displayName: "Publish To NPM"
     inputs:
       command: publish
+      workingDir: "_release"
       publishRegistry: useExternalRegistry
       publishEndpoint: Npm

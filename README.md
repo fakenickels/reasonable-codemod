@@ -1,57 +1,36 @@
-# hello-reason
+# Upgrade Reason React
 
-[![Build Status](https://dev.azure.com/esy-ocaml/esy-ocaml/_apis/build/status/esy-ocaml.hello-reason?branchName=master)](https://dev.azure.com/esy-ocaml/esy-ocaml/_build/latest?definitionId=1?branchName=master)
+[![Build Status](https://dev.azure.com/mlbli/Upgrade%20ReasonReact/_apis/build/status/bloodyowl.upgrade-reason-react-esy?branchName=master)](https://dev.azure.com/mlbli/Upgrade%20ReasonReact/_build/latest?definitionId=4&branchName=master)
 
-A project which demonstrates a Reason workflow with [Esy][].
+Upgrade your ReasonReact codebase to 0.7.0 (the release with hooks).
 
-[Esy]: https://github.com/esy-ocaml/esy
+## Installation
 
+```console
+$ yarn add bloodyowl-upgrade-reason-react
+```
 
 ## Usage
 
-You need Esy, you can install the beta using [npm](https://npmjs.com):
+Run the script
 
-    % npm install -g esy@latest
+```console
+$ find src/**/*.re | upgrade-reason-react.exe
+```
 
-> NOTE: Make sure `esy --version` returns at least `0.5.4` for this project to build.
+Upgrade ReasonReact
 
-Then run the `esy` command from this project root to install and build depenencies.
+```console
+$ yarn add reason-react@^0.7.0
+```
 
-    % esy
+Change JSX version in `bsconfig.json`
 
-Now you can run your editor within the environment (which also includes merlin):
-
-    % esy $EDITOR
-    % esy vim
-
-Alternatively you can try [vim-reasonml](https://github.com/jordwalke/vim-reasonml)
-which loads esy project environments automatically.
-
-After you make some changes to source code, you can re-run project's build
-again with the same simple `esy` command.
-
-    % esy
-
-And test compiled executable (runs `scripts.tests` specified in
-`package.json`):
-
-    % REASON_NATIVE_ROOT=. esy test
-
-Documentation for the libraries in the project can be generated with:
-
-    % esy doc
-    % esy open '#{self.target_dir}/default/_doc/_html/index.html'
-
-Shell into environment:
-
-    % esy shell
+```diff
+ "reason": {
+-  "react-jsx": 2
++  "react-jsx": 3
+ },
+```
 
 
-## Create Prebuilt Release:
-
-`esy` allows creating prebuilt binary packages for your current platform, with
-no dependencies.
-
-    % esy npm-release
-    % cd _release
-    % npm publish
