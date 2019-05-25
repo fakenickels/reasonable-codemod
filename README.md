@@ -15,7 +15,9 @@ $ yarn add bloodyowl-upgrade-reason-react
 Run the script
 
 ```console
-$ find src/**/*.re | upgrade-reason-react.exe
+$ find src/**/*.re | Upgrade
+$ # or on windows
+$ find src/**/*.re | Upgrade.exe
 ```
 
 Upgrade ReasonReact
