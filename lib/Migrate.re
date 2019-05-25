@@ -1,5 +1,5 @@
 open Reason_parser;
-open Ast_404;
+open Migrate_parsetree.Ast_404;
 open Ast_helper;
 open Ast_mapper;
 open Asttypes;
@@ -27,6 +27,9 @@ let printModuleLocation =
        );
 
 let childrenUsageMap = ref(StringArrayMap.empty);
+
+let logPrefix =
+  Pastel.(<Pastel backgroundColor=Cyan color=Black> " UpgradeRR " </Pastel>);
 
 let rec implementionMapStructureItem = (key, mapper, item) =>
   switch (item) {
@@ -456,14 +459,14 @@ let rec interfaceMapSignatureItem = (key, mapper, item) =>
           {pval_name: {txt: "make"}, pval_type} as valueDescription,
         ),
     } as makeType =>
-    let rec returnsAComponent = ({ptyp_desc} as t) =>
+    let rec returnsAComponent = ({ptyp_desc}) =>
       switch (ptyp_desc) {
       | Ptyp_constr(
           {
             txt:
-              Ldot(Lident("ReasonReact"), "componentSpec" | "component") as x |
-              Lapply(_) as x |
-              Lident(_) as x,
+              Ldot(Lident("ReasonReact"), "componentSpec" | "component") |
+              Lapply(_) |
+              Lident(_),
           },
           _,
         ) =>
@@ -479,9 +482,9 @@ let rec interfaceMapSignatureItem = (key, mapper, item) =>
         | Ptyp_constr(
             {
               txt:
-                Ldot(Lident("ReasonReact"), "componentSpec" | "component") as x |
-                Lapply(_) as x |
-                Lident(_) as x,
+                Ldot(Lident("ReasonReact"), "componentSpec" | "component") |
+                Lapply(_) |
+                Lident(_),
             },
             _,
           ) => {
@@ -649,7 +652,16 @@ let transform = (args, fileName) =>
           (newAst, comments),
         );
         Format.print_flush();
-        print_endline({js|✅ Done |js} ++ target);
+        Console.log(
+          Pastel.(
+            <Pastel>
+              logPrefix
+              <Pastel backgroundColor=Green color=Black> " Done " </Pastel>
+              " "
+              target
+            </Pastel>
+          ),
+        );
         close_out(oc);
       };
       let formatter = Format.formatter_of_out_channel(oc);
@@ -658,7 +670,14 @@ let transform = (args, fileName) =>
         (newAst, comments),
       );
       Format.print_flush();
-      print_endline({js|✅ Done |js} ++ target);
+      Console.log(
+        <Pastel>
+          logPrefix
+          <Pastel backgroundColor=Green color=Black> " Done " </Pastel>
+          " "
+          target
+        </Pastel>,
+      );
       close_out(oc);
     }
   ) {
@@ -667,25 +686,33 @@ let transform = (args, fileName) =>
       args |> Array.exists(item => item == "--demo") ? "output/" : "";
     let file = fileName |> Filename.remove_extension;
     let target = outputDir ++ file ++ ".re";
-    print_endline({js|❗️️ Errored on |js} ++ target);
+    Console.log(
+      <Pastel>
+        logPrefix
+        <Pastel backgroundColor=Red color=White> " Error " </Pastel>
+        " "
+        target
+      </Pastel>,
+    );
+
     let err = Printexc.to_string(error);
-    print_endline(err);
+    Console.log(err);
   };
 
 let main = () => {
   switch (Sys.argv) {
   | [||]
   | [|"help" | "-help" | "--help"|] =>
-    print_endline("upgrade-reason-react");
-    print_endline("Helps you migrate ReasonReact from 0.6 to 0.7");
-    print_endline("Usage: find src/**/*.re | migrate");
-    print_endline("Usage: pass a list of .re files you'd like to convert.");
+    Console.log("upgrade-reason-react");
+    Console.log("Helps you migrate ReasonReact from 0.6 to 0.7");
+    Console.log("Usage: find src/**/*.re | Upgrade");
+    Console.log("Usage: pass a list of .re files you'd like to convert.");
   | args =>
     read()
     |> StringSet.filter(item => Filename.extension(item) == ".re")
     /* Uncomment next line for debug */
     /* && ! String.contains(item, '_') */
     |> StringSet.iter(transform(args));
-    print_endline("Done!");
+    Console.log("Done!");
   };
 };
