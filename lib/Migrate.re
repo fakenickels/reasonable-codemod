@@ -27,7 +27,6 @@ let printModuleLocation =
        );
 
 let childrenUsageMap = ref(StringArrayMap.empty);
-let removeComponentBindingMap = ref(StringArrayMap.empty);
 
 let logPrefix =
   Pastel.(<Pastel backgroundColor=Cyan color=Black> " UpgradeRR " </Pastel>);
@@ -165,11 +164,7 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
                   Pexp_fun(Nolabel, None, {ppat_desc: Ppat_any}, body),
               },
             ),
-          ] =>
-          removeComponentBindingMap.contents =
-            removeComponentBindingMap.contents
-            |> StringArrayMap.add(key, true);
-          body;
+          ] => body
         | [
             (
               {txt: Lident("didMount")},
@@ -190,11 +185,7 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
                   Pexp_fun(Nolabel, None, {ppat_desc: Ppat_any}, body),
               },
             ),
-          ] =>
-          removeComponentBindingMap.contents =
-            removeComponentBindingMap.contents
-            |> StringArrayMap.add(key, true);
-          {
+          ] => {
             pexp_loc: Location.none,
             pexp_attributes: [],
             pexp_desc:
@@ -244,7 +235,7 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
                 },
                 body,
               ),
-          };
+          }
         | _ => {
             pexp_loc: Location.none,
             pexp_attributes: [],
@@ -259,7 +250,27 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
                   pexp_loc: Location.none,
                   pexp_attributes: [],
                 },
-                [(Nolabel, record)],
+                [
+                  (
+                    Nolabel,
+                    {
+                      ...record,
+                      pexp_desc:
+                        Pexp_record(
+                          items,
+                          Some({
+                            pexp_desc:
+                              Pexp_ident({
+                                txt: Lident("ReactCompat.component"),
+                                loc: Location.none,
+                              }),
+                            pexp_loc: Location.none,
+                            pexp_attributes: [],
+                          }),
+                        ),
+                    },
+                  ),
+                ],
               ),
           }
         };
@@ -553,19 +564,8 @@ let rec implementionSecondPassMapStructure = (key, mapper, item) => {
               },
             ],
           ),
-      } as letBinding =>
-      switch (
-        try(
-          Some(
-            removeComponentBindingMap.contents |> StringArrayMap.find(key),
-          )
-        ) {
-        | _ => None
-        }
-      ) {
-      | Some(true) => None
-      | _ => Some(letBinding)
-      }
+      } =>
+      None
     | item => Some(item)
     };
   };

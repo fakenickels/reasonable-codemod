@@ -1,12 +1,13 @@
 type action =
   | Tick;
 type state = {count: int};
-let component = ReasonReact.reducerComponent("Test");
+
 [@react.component]
 let make = (~prop1, ~prop2=?, ~prop3=1, ~children, ()) => {
   let children = React.Children.toArray(children);
   ReactCompat.useRecordApi({
-    ...component,
+    ...ReactCompat.component,
+
     initialState: () => {count: prop3},
     reducer: (action, state) => {
       switch (action) {
