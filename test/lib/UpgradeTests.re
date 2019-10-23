@@ -46,6 +46,27 @@ describe("should transform correctly", ({test}) => {
     expect.file(root ++ "/output/test/cases/StatelessComponent.rei").
       toMatchSnapshot();
   });
+  test("StatelessComponentWithMultilineDidMount", ({expect}) => {
+    transform(root ++ "/test/cases/StatelessComponentWithMultilineDidMount.re");
+    expect.file(root ++ "/output/test/cases/StatelessComponentWithMultilineDidMount.re").
+      toMatchSnapshot();
+    expect.file(root ++ "/output/test/cases/StatelessComponentWithMultilineDidMount.rei").
+      toMatchSnapshot();
+  });
+  test("StatelessComponentWithRenderOnly", ({expect}) => {
+    transform(root ++ "/test/cases/StatelessComponentWithRenderOnly.re");
+    expect.file(root ++ "/output/test/cases/StatelessComponentWithRenderOnly.re").
+      toMatchSnapshot();
+    expect.file(root ++ "/output/test/cases/StatelessComponentWithRenderOnly.rei").
+      toMatchSnapshot();
+  });
+  test("StatelessComponentWithRenderOnlyButReadsSelf", ({expect}) => {
+    transform(root ++ "/test/cases/StatelessComponentWithRenderOnlyButReadsSelf.re");
+    expect.file(root ++ "/output/test/cases/StatelessComponentWithRenderOnlyButReadsSelf.re").
+      toMatchSnapshot();
+    expect.file(root ++ "/output/test/cases/StatelessComponentWithRenderOnlyButReadsSelf.rei").
+      toMatchSnapshot();
+  });
   test("StatelessComponentWithChildren", ({expect}) => {
     transform(root ++ "/test/cases/StatelessComponentWithChildren.re");
     expect.file(
