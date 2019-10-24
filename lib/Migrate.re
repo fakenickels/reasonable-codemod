@@ -154,25 +154,414 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
             ),
         } as record =>
         foundReturnComponent := true;
-        {
-          pexp_loc: Location.none,
-          pexp_attributes: [],
-          pexp_desc:
-            Pexp_apply(
+
+        switch (items) {
+        | [
+            (
+              {txt: Lident("render")},
               {
                 pexp_desc:
-                  Pexp_ident({
-                    txt: Lident("ReactCompat.useRecordApi"),
-                    loc: Location.none,
-                  }),
-                pexp_loc: Location.none,
-                pexp_attributes: [],
+                  Pexp_fun(Nolabel, None, {ppat_desc: Ppat_any}, body),
               },
-              [(Nolabel, record)],
             ),
+          ] => body
+        | [
+            (
+              {txt: Lident("didMount")},
+              {
+                pexp_desc:
+                  Pexp_fun(
+                    Nolabel,
+                    None,
+                    {ppat_desc: Ppat_any},
+                    didMountBody,
+                  ),
+              },
+            ),
+            (
+              {txt: Lident("render")},
+              {
+                pexp_desc:
+                  Pexp_fun(Nolabel, None, {ppat_desc: Ppat_any}, body),
+              },
+            ),
+          ] => {
+            pexp_loc: Location.none,
+            pexp_attributes: [],
+            pexp_desc:
+              Pexp_sequence(
+                {
+                  pexp_loc: Location.none,
+                  pexp_attributes: [],
+                  pexp_desc:
+                    Pexp_apply(
+                      {
+                        pexp_desc:
+                          Pexp_ident({
+                            txt: Lident("ReactCompat.useMount"),
+                            loc: Location.none,
+                          }),
+                        pexp_loc: Location.none,
+                        pexp_attributes: [],
+                      },
+                      [
+                        (
+                          Nolabel,
+                          {
+                            pexp_desc:
+                              Pexp_fun(
+                                Nolabel,
+                                None,
+                                {
+                                  ppat_loc: Location.none,
+                                  ppat_attributes: [],
+                                  ppat_desc:
+                                    Ppat_construct(
+                                      {
+                                        loc: Location.none,
+                                        txt: Lident("()"),
+                                      },
+                                      None,
+                                    ),
+                                },
+                                didMountBody,
+                              ),
+                            pexp_loc: Location.none,
+                            pexp_attributes: [],
+                          },
+                        ),
+                      ],
+                    ),
+                },
+                body,
+              ),
+          }
+        | [
+            (
+              {txt: Lident("initialState")},
+              {
+                pexp_desc:
+                  Pexp_fun(
+                    Nolabel,
+                    None,
+                    {ppat_desc: Ppat_construct({txt: Lident("()")}, None)},
+                    _,
+                  ) as initialStateFunc,
+              },
+            ),
+            (
+              {txt: Lident("reducer")},
+              {pexp_desc: Pexp_fun(Nolabel, None, _, _) as reducerFunc},
+            ),
+            (
+              {txt: Lident("render")},
+              {
+                pexp_desc:
+                  Pexp_fun(
+                    Nolabel,
+                    None,
+                    {ppat_desc: Ppat_record(renderDestruct, _)},
+                    body,
+                  ),
+              },
+            ),
+          ]
+            when
+              List.length(
+                renderDestruct
+                |> List.filter((({txt}, _)) => {
+                     txt == Lident("send") || txt == Lident("state")
+                   }),
+              )
+              == List.length(renderDestruct) => {
+            pexp_loc: Location.none,
+            pexp_attributes: [],
+            pexp_desc:
+              Pexp_let(
+                Nonrecursive,
+                [
+                  {
+                    pvb_pat: {
+                      ppat_desc:
+                        Ppat_tuple([
+                          {
+                            ppat_desc:
+                              Ppat_var({txt: "state", loc: Location.none}),
+                            ppat_loc: Location.none,
+                            ppat_attributes: [],
+                          },
+                          {
+                            ppat_desc:
+                              Ppat_var({txt: "send", loc: Location.none}),
+                            ppat_loc: Location.none,
+                            ppat_attributes: [],
+                          },
+                        ]),
+                      ppat_loc: Location.none,
+                      ppat_attributes: [],
+                    },
+                    pvb_expr: {
+                      pexp_loc: Location.none,
+                      pexp_attributes: [],
+                      pexp_desc:
+                        Pexp_apply(
+                          {
+                            pexp_desc:
+                              Pexp_ident({
+                                txt:
+                                  Lident(
+                                    "ReactUpdateLegacy.useReducerWithMapState",
+                                  ),
+                                loc: Location.none,
+                              }),
+                            pexp_loc: Location.none,
+                            pexp_attributes: [],
+                          },
+                          [
+                            (
+                              Nolabel,
+                              {
+                                pexp_desc: initialStateFunc,
+                                pexp_loc: Location.none,
+                                pexp_attributes: [],
+                              },
+                            ),
+                            (
+                              Nolabel,
+                              {
+                                pexp_desc: reducerFunc,
+                                pexp_loc: Location.none,
+                                pexp_attributes: [],
+                              },
+                            ),
+                          ],
+                        ),
+                    },
+                    pvb_attributes: [],
+                    pvb_loc: Location.none,
+                  },
+                ],
+                body,
+              ),
+          }
+        | [
+            (
+              {txt: Lident("initialState")},
+              {
+                pexp_desc:
+                  Pexp_fun(
+                    Nolabel,
+                    None,
+                    {ppat_desc: Ppat_construct({txt: Lident("()")}, None)},
+                    _,
+                  ) as initialStateFunc,
+              },
+            ),
+            (
+              {txt: Lident("reducer")},
+              {pexp_desc: Pexp_fun(Nolabel, None, _, _) as reducerFunc},
+            ),
+            (
+              {txt: Lident("didMount")},
+              {
+                pexp_desc:
+                  Pexp_fun(
+                    Nolabel,
+                    None,
+                    {ppat_desc: Ppat_record(didMountDestruct, _)},
+                    didMountBody,
+                  ),
+              },
+            ),
+            (
+              {txt: Lident("render")},
+              {
+                pexp_desc:
+                  Pexp_fun(
+                    Nolabel,
+                    None,
+                    {ppat_desc: Ppat_record(renderDestruct, _)},
+                    body,
+                  ),
+              },
+            ),
+          ]
+            when
+              List.length(
+                renderDestruct
+                |> List.filter((({txt}, _)) => {
+                     txt == Lident("send") || txt == Lident("state")
+                   }),
+              )
+              == List.length(renderDestruct)
+              && List.length(
+                   didMountDestruct
+                   |> List.filter((({txt}, _)) => {
+                        txt == Lident("send") || txt == Lident("state")
+                      }),
+                 )
+              == List.length(didMountDestruct) => {
+            pexp_loc: Location.none,
+            pexp_attributes: [],
+            pexp_desc:
+              Pexp_let(
+                Nonrecursive,
+                [
+                  {
+                    pvb_pat: {
+                      ppat_desc:
+                        Ppat_tuple([
+                          {
+                            ppat_desc:
+                              Ppat_var({txt: "state", loc: Location.none}),
+                            ppat_loc: Location.none,
+                            ppat_attributes: [],
+                          },
+                          {
+                            ppat_desc:
+                              Ppat_var({txt: "send", loc: Location.none}),
+                            ppat_loc: Location.none,
+                            ppat_attributes: [],
+                          },
+                        ]),
+                      ppat_loc: Location.none,
+                      ppat_attributes: [],
+                    },
+                    pvb_expr: {
+                      pexp_loc: Location.none,
+                      pexp_attributes: [],
+                      pexp_desc:
+                        Pexp_apply(
+                          {
+                            pexp_desc:
+                              Pexp_ident({
+                                txt:
+                                  Lident(
+                                    "ReactUpdateLegacy.useReducerWithMapState",
+                                  ),
+                                loc: Location.none,
+                              }),
+                            pexp_loc: Location.none,
+                            pexp_attributes: [],
+                          },
+                          [
+                            (
+                              Nolabel,
+                              {
+                                pexp_desc: initialStateFunc,
+                                pexp_loc: Location.none,
+                                pexp_attributes: [],
+                              },
+                            ),
+                            (
+                              Nolabel,
+                              {
+                                pexp_desc: reducerFunc,
+                                pexp_loc: Location.none,
+                                pexp_attributes: [],
+                              },
+                            ),
+                          ],
+                        ),
+                    },
+                    pvb_attributes: [],
+                    pvb_loc: Location.none,
+                  },
+                ],
+                {
+                  pexp_loc: Location.none,
+                  pexp_attributes: [],
+                  pexp_desc:
+                    Pexp_sequence(
+                      {
+                        pexp_loc: Location.none,
+                        pexp_attributes: [],
+                        pexp_desc:
+                          Pexp_apply(
+                            {
+                              pexp_desc:
+                                Pexp_ident({
+                                  txt: Lident("ReactCompat.useMount"),
+                                  loc: Location.none,
+                                }),
+                              pexp_loc: Location.none,
+                              pexp_attributes: [],
+                            },
+                            [
+                              (
+                                Nolabel,
+                                {
+                                  pexp_desc:
+                                    Pexp_fun(
+                                      Nolabel,
+                                      None,
+                                      {
+                                        ppat_loc: Location.none,
+                                        ppat_attributes: [],
+                                        ppat_desc:
+                                          Ppat_construct(
+                                            {
+                                              loc: Location.none,
+                                              txt: Lident("()"),
+                                            },
+                                            None,
+                                          ),
+                                      },
+                                      didMountBody,
+                                    ),
+                                  pexp_loc: Location.none,
+                                  pexp_attributes: [],
+                                },
+                              ),
+                            ],
+                          ),
+                      },
+                      body,
+                    ),
+                },
+              ),
+          }
+        | _ => {
+            pexp_loc: Location.none,
+            pexp_attributes: [],
+            pexp_desc:
+              Pexp_apply(
+                {
+                  pexp_desc:
+                    Pexp_ident({
+                      txt: Lident("ReactCompat.useRecordApi"),
+                      loc: Location.none,
+                    }),
+                  pexp_loc: Location.none,
+                  pexp_attributes: [],
+                },
+                [
+                  (
+                    Nolabel,
+                    {
+                      ...record,
+                      pexp_desc:
+                        Pexp_record(
+                          items,
+                          Some({
+                            pexp_desc:
+                              Pexp_ident({
+                                txt: Lident("ReactCompat.component"),
+                                loc: Location.none,
+                              }),
+                            pexp_loc: Location.none,
+                            pexp_attributes: [],
+                          }),
+                        ),
+                    },
+                  ),
+                ],
+              ),
+          }
         };
       | _ as expression => expression
       };
+
     let body = mapBody(expression);
     let rec mapChildren = expression =>
       switch (expression) {
@@ -351,12 +740,15 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
               ...value,
               pvb_expr: body,
               pvb_attributes:
-                foundReturnComponent^ ?
-                  [
-                    ({txt: "react.component", loc: Location.none}, PStr([])),
+                foundReturnComponent^
+                  ? [
+                    (
+                      {txt: "react.component", loc: Location.none},
+                      PStr([]),
+                    ),
                     ...value.pvb_attributes,
-                  ] :
-                  value.pvb_attributes,
+                  ]
+                  : value.pvb_attributes,
             },
           ],
         ),
@@ -364,9 +756,122 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
   | _ => default_mapper.structure_item(mapper, item)
   };
 
+let rec implementionSecondPassMapStructure = (key, mapper, item) => {
+  let mapStructureItem = item => {
+    switch (item) {
+    | {
+        pstr_desc:
+          Pstr_module(
+            {
+              pmb_name: {txt: moduleName},
+              pmb_expr:
+                {
+                  pmod_desc:
+                    Pmod_functor(
+                      name,
+                      moduleType,
+                      {pmod_desc: Pmod_structure(structure)} as moduleExpression,
+                    ),
+                } as functorExpression,
+            } as moduleBinding,
+          ),
+      } as structureItem =>
+      Some({
+        ...structureItem,
+        pstr_desc:
+          Pstr_module({
+            ...moduleBinding,
+            pmb_expr: {
+              ...functorExpression,
+              pmod_desc:
+                Pmod_functor(
+                  name,
+                  moduleType,
+                  {
+                    ...moduleExpression,
+                    pmod_desc:
+                      Pmod_structure(
+                        implementionSecondPassMapStructure(
+                          switch (key) {
+                          | TopLevel => Nested([|moduleName|])
+                          | Nested(keys) =>
+                            Nested(Array.concat([keys, [|moduleName|]]))
+                          },
+                          mapper,
+                          structure,
+                        ),
+                      ),
+                  },
+                ),
+            },
+          }),
+      })
+    | {
+        pstr_desc:
+          Pstr_module(
+            {
+              pmb_name: {txt: moduleName},
+              pmb_expr:
+                {pmod_desc: Pmod_structure(structure)} as moduleExpression,
+            } as moduleBinding,
+          ),
+      } as structureItem =>
+      Some({
+        ...structureItem,
+        pstr_desc:
+          Pstr_module({
+            ...moduleBinding,
+            pmb_expr: {
+              ...moduleExpression,
+              pmod_desc:
+                Pmod_structure(
+                  implementionSecondPassMapStructure(
+                    switch (key) {
+                    | TopLevel => Nested([|moduleName|])
+                    | Nested(keys) =>
+                      Nested(Array.concat([keys, [|moduleName|]]))
+                    },
+                    mapper,
+                    structure,
+                  ),
+                ),
+            },
+          }),
+      })
+    | {
+        pstr_desc:
+          Pstr_value(
+            Nonrecursive,
+            [
+              {
+                pvb_pat: {ppat_desc: Ppat_var({txt: "component"})},
+                pvb_expr: expression,
+              },
+            ],
+          ),
+      } =>
+      None
+    | item => Some(item)
+    };
+  };
+  List.fold_right(
+    (item, acc) =>
+      switch (mapStructureItem(item)) {
+      | None => acc
+      | Some(item) => [item, ...acc]
+      },
+    item,
+    [],
+  );
+};
+
 let implementationRefactorMapper = {
   ...default_mapper,
   structure_item: implementionMapStructureItem(TopLevel),
+};
+let implementationSecondPassRefactorMapper = {
+  ...default_mapper,
+  structure: implementionSecondPassMapStructure(TopLevel),
 };
 
 let rec interfaceMapSignatureItem = (key, mapper, item) =>
@@ -497,7 +1002,7 @@ let rec interfaceMapSignatureItem = (key, mapper, item) =>
           }
         | Ptyp_arrow(Nolabel, arg, coreType) =>
           switch (
-            try (Some(childrenUsageMap.contents |> StringArrayMap.find(key))) {
+            try(Some(childrenUsageMap.contents |> StringArrayMap.find(key))) {
             | _ => None
             }
           ) {
@@ -598,9 +1103,123 @@ let rec interfaceMapSignatureItem = (key, mapper, item) =>
   | _ => item
   };
 
+let rec interfaceMapSignature = (key, mapper, item) => {
+  let mapSignatureItem = item =>
+    switch (item) {
+    | {
+        psig_desc:
+          Psig_module(
+            {
+              pmd_name: {txt: moduleName},
+              pmd_type:
+                {
+                  pmty_desc:
+                    Pmty_functor(
+                      name,
+                      moduleTypeDef,
+                      {pmty_desc: Pmty_signature(signatures)} as moduleType,
+                    ),
+                } as functorType,
+            } as moduleDef,
+          ),
+      } =>
+      Some({
+        ...item,
+        psig_desc:
+          Psig_module({
+            ...moduleDef,
+            pmd_type: {
+              ...functorType,
+              pmty_desc:
+                Pmty_functor(
+                  name,
+                  moduleTypeDef,
+                  {
+                    ...moduleType,
+                    pmty_desc:
+                      Pmty_signature(
+                        interfaceMapSignature(
+                          switch (key) {
+                          | TopLevel => Nested([|moduleName|])
+                          | Nested(keys) =>
+                            Nested(Array.concat([keys, [|moduleName|]]))
+                          },
+                          mapper,
+                          signatures,
+                        ),
+                      ),
+                  },
+                ),
+            },
+          }),
+      })
+    | {
+        psig_desc:
+          Psig_module(
+            {
+              pmd_name: {txt: moduleName},
+              pmd_type:
+                {pmty_desc: Pmty_signature(signatures)} as moduleType,
+            } as moduleDef,
+          ),
+      } =>
+      Some({
+        ...item,
+        psig_desc:
+          Psig_module({
+            ...moduleDef,
+            pmd_type: {
+              ...moduleType,
+              pmty_desc:
+                Pmty_signature(
+                  interfaceMapSignature(
+                    switch (key) {
+                    | TopLevel => Nested([|moduleName|])
+                    | Nested(keys) =>
+                      Nested(Array.concat([keys, [|moduleName|]]))
+                    },
+                    mapper,
+                    signatures,
+                  ),
+                ),
+            },
+          }),
+      })
+    | {psig_desc: Psig_value({pval_name: {txt: "component"}})} => None
+    | {
+        psig_desc:
+          Psig_type(
+            Recursive,
+            [
+              {
+                ptype_name: {txt: "action" | "state"},
+                ptype_kind: Ptype_abstract,
+              },
+            ],
+          ),
+      } =>
+      None
+    | _ => Some(item)
+    };
+  List.fold_right(
+    (item, acc) =>
+      switch (mapSignatureItem(item)) {
+      | None => acc
+      | Some(item) => [item, ...acc]
+      },
+    item,
+    [],
+  );
+};
+
 let interfaceRefactorMapper = {
   ...default_mapper,
   signature_item: interfaceMapSignatureItem(TopLevel),
+};
+
+let interfaceSecondPassRefactorMapper = {
+  ...default_mapper,
+  signature: interfaceMapSignature(TopLevel),
 };
 
 module StringSet = Set.Make(String);
@@ -608,7 +1227,7 @@ module StringSet = Set.Make(String);
 let read = () => {
   let set = ref(StringSet.empty);
   let rec read = () =>
-    try (
+    try(
       {
         set := set^ |> StringSet.add(stdin |> input_line);
         read();
@@ -621,66 +1240,74 @@ let read = () => {
 };
 
 let transform = (args, fileName) =>
-  try (
-    {
-      let outputDir =
-        args |> Array.exists(item => item == "--demo") ? "output/" : "";
-      let file = fileName |> Filename.remove_extension;
-      let ic = open_in_bin(file ++ ".re");
+  try({
+    let outputDir =
+      args |> Array.exists(item => item == "--demo") ? "output/" : "";
+    let file = fileName |> Filename.remove_extension;
+    let ic = open_in_bin(file ++ ".re");
+    let lexbuf = Lexing.from_channel(ic);
+    let (ast, comments) =
+      Reason_toolchain.RE.implementation_with_comments(lexbuf);
+    let newAst =
+      implementationRefactorMapper.structure(
+        implementationRefactorMapper,
+        ast,
+      );
+    let newAst =
+      implementationSecondPassRefactorMapper.structure(
+        implementationSecondPassRefactorMapper,
+        newAst,
+      );
+    let target = outputDir ++ file ++ ".re";
+    let oc = open_out_bin(target);
+    if (Sys.file_exists(file ++ ".rei")) {
+      let ic = open_in_bin(file ++ ".rei");
       let lexbuf = Lexing.from_channel(ic);
       let (ast, comments) =
-        Reason_toolchain.RE.implementation_with_comments(lexbuf);
+        Reason_toolchain.RE.interface_with_comments(lexbuf);
       let newAst =
-        implementationRefactorMapper.structure(
-          implementationRefactorMapper,
-          ast,
+        interfaceRefactorMapper.signature(interfaceRefactorMapper, ast);
+      let newAst =
+        interfaceSecondPassRefactorMapper.signature(
+          interfaceSecondPassRefactorMapper,
+          newAst,
         );
-      let target = outputDir ++ file ++ ".re";
+      let target = outputDir ++ file ++ ".rei";
       let oc = open_out_bin(target);
-      if (Sys.file_exists(file ++ ".rei")) {
-        let ic = open_in_bin(file ++ ".rei");
-        let lexbuf = Lexing.from_channel(ic);
-        let (ast, comments) =
-          Reason_toolchain.RE.interface_with_comments(lexbuf);
-        let newAst =
-          interfaceRefactorMapper.signature(interfaceRefactorMapper, ast);
-        let target = outputDir ++ file ++ ".rei";
-        let oc = open_out_bin(target);
-        let formatter = Format.formatter_of_out_channel(oc);
-        Reason_toolchain.RE.print_interface_with_comments(
-          formatter,
-          (newAst, comments),
-        );
-        Format.print_flush();
-        Console.log(
-          Pastel.(
-            <Pastel>
-              logPrefix
-              <Pastel backgroundColor=Green color=Black> " Done " </Pastel>
-              " "
-              target
-            </Pastel>
-          ),
-        );
-        close_out(oc);
-      };
       let formatter = Format.formatter_of_out_channel(oc);
-      Reason_toolchain.RE.print_implementation_with_comments(
+      Reason_toolchain.RE.print_interface_with_comments(
         formatter,
         (newAst, comments),
       );
       Format.print_flush();
       Console.log(
-        <Pastel>
-          logPrefix
-          <Pastel backgroundColor=Green color=Black> " Done " </Pastel>
-          " "
-          target
-        </Pastel>,
+        Pastel.(
+          <Pastel>
+            logPrefix
+            <Pastel backgroundColor=Green color=Black> " Done " </Pastel>
+            " "
+            target
+          </Pastel>
+        ),
       );
       close_out(oc);
-    }
-  ) {
+    };
+    let formatter = Format.formatter_of_out_channel(oc);
+    Reason_toolchain.RE.print_implementation_with_comments(
+      formatter,
+      (newAst, comments),
+    );
+    Format.print_flush();
+    Console.log(
+      <Pastel>
+        logPrefix
+        <Pastel backgroundColor=Green color=Black> " Done " </Pastel>
+        " "
+        target
+      </Pastel>,
+    );
+    close_out(oc);
+  }) {
   | error =>
     let outputDir =
       args |> Array.exists(item => item == "--demo") ? "output/" : "";

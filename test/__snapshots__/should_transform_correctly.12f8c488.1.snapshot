@@ -1,4 +1,4 @@
-should transform correctly › ReducerComponent
+should transform correctly › ReducerComponentWithDidMount
 type action =
   | Tick;
 type state = {count: int};

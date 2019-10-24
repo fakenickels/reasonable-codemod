@@ -21,6 +21,13 @@ describe("should transform correctly", ({test}) => {
     expect.file(root ++ "/output/test/cases/ReducerComponent.rei").
       toMatchSnapshot();
   });
+  test("ReducerComponentWithDidMount", ({expect}) => {
+    transform(root ++ "/test/cases/ReducerComponentWithDidMount.re");
+    expect.file(root ++ "/output/test/cases/ReducerComponentWithDidMount.re").
+      toMatchSnapshot();
+    expect.file(root ++ "/output/test/cases/ReducerComponentWithDidMount.rei").
+      toMatchSnapshot();
+  });
   test("ReducerComponentWithChildren", ({expect}) => {
     transform(root ++ "/test/cases/ReducerComponentWithChildren.re");
     expect.file(root ++ "/output/test/cases/ReducerComponentWithChildren.re").
@@ -44,6 +51,27 @@ describe("should transform correctly", ({test}) => {
     expect.file(root ++ "/output/test/cases/StatelessComponent.re").
       toMatchSnapshot();
     expect.file(root ++ "/output/test/cases/StatelessComponent.rei").
+      toMatchSnapshot();
+  });
+  test("StatelessComponentWithMultilineDidMount", ({expect}) => {
+    transform(root ++ "/test/cases/StatelessComponentWithMultilineDidMount.re");
+    expect.file(root ++ "/output/test/cases/StatelessComponentWithMultilineDidMount.re").
+      toMatchSnapshot();
+    expect.file(root ++ "/output/test/cases/StatelessComponentWithMultilineDidMount.rei").
+      toMatchSnapshot();
+  });
+  test("StatelessComponentWithRenderOnly", ({expect}) => {
+    transform(root ++ "/test/cases/StatelessComponentWithRenderOnly.re");
+    expect.file(root ++ "/output/test/cases/StatelessComponentWithRenderOnly.re").
+      toMatchSnapshot();
+    expect.file(root ++ "/output/test/cases/StatelessComponentWithRenderOnly.rei").
+      toMatchSnapshot();
+  });
+  test("StatelessComponentWithRenderOnlyButReadsSelf", ({expect}) => {
+    transform(root ++ "/test/cases/StatelessComponentWithRenderOnlyButReadsSelf.re");
+    expect.file(root ++ "/output/test/cases/StatelessComponentWithRenderOnlyButReadsSelf.re").
+      toMatchSnapshot();
+    expect.file(root ++ "/output/test/cases/StatelessComponentWithRenderOnlyButReadsSelf.rei").
       toMatchSnapshot();
   });
   test("StatelessComponentWithChildren", ({expect}) => {
