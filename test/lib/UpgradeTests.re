@@ -21,6 +21,13 @@ describe("should transform correctly", ({test}) => {
     expect.file(root ++ "/output/test/cases/ReducerComponent.rei").
       toMatchSnapshot();
   });
+  test("ReducerComponentWithDidMount", ({expect}) => {
+    transform(root ++ "/test/cases/ReducerComponentWithDidMount.re");
+    expect.file(root ++ "/output/test/cases/ReducerComponentWithDidMount.re").
+      toMatchSnapshot();
+    expect.file(root ++ "/output/test/cases/ReducerComponentWithDidMount.rei").
+      toMatchSnapshot();
+  });
   test("ReducerComponentWithChildren", ({expect}) => {
     transform(root ++ "/test/cases/ReducerComponentWithChildren.re");
     expect.file(root ++ "/output/test/cases/ReducerComponentWithChildren.re").

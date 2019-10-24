@@ -198,7 +198,7 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
                       {
                         pexp_desc:
                           Pexp_ident({
-                            txt: Lident("React.useEffect0"),
+                            txt: Lident("ReactCompat.useMount"),
                             loc: Location.none,
                           }),
                         pexp_loc: Location.none,
@@ -270,8 +270,7 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
               List.length(
                 renderDestruct
                 |> List.filter((({txt}, _)) => {
-                     Console.log(txt);
-                     txt == Lident("send") || txt == Lident("state");
+                     txt == Lident("send") || txt == Lident("state")
                    }),
               )
               == List.length(renderDestruct) => {
@@ -343,6 +342,183 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
                   },
                 ],
                 body,
+              ),
+          }
+        | [
+            (
+              {txt: Lident("initialState")},
+              {
+                pexp_desc:
+                  Pexp_fun(
+                    Nolabel,
+                    None,
+                    {ppat_desc: Ppat_construct({txt: Lident("()")}, None)},
+                    _,
+                  ) as initialStateFunc,
+              },
+            ),
+            (
+              {txt: Lident("reducer")},
+              {pexp_desc: Pexp_fun(Nolabel, None, _, _) as reducerFunc},
+            ),
+            (
+              {txt: Lident("didMount")},
+              {
+                pexp_desc:
+                  Pexp_fun(
+                    Nolabel,
+                    None,
+                    {ppat_desc: Ppat_record(didMountDestruct, _)},
+                    didMountBody,
+                  ),
+              },
+            ),
+            (
+              {txt: Lident("render")},
+              {
+                pexp_desc:
+                  Pexp_fun(
+                    Nolabel,
+                    None,
+                    {ppat_desc: Ppat_record(renderDestruct, _)},
+                    body,
+                  ),
+              },
+            ),
+          ]
+            when
+              List.length(
+                renderDestruct
+                |> List.filter((({txt}, _)) => {
+                     txt == Lident("send") || txt == Lident("state")
+                   }),
+              )
+              == List.length(renderDestruct)
+              && List.length(
+                   didMountDestruct
+                   |> List.filter((({txt}, _)) => {
+                        txt == Lident("send") || txt == Lident("state")
+                      }),
+                 )
+              == List.length(didMountDestruct) => {
+            pexp_loc: Location.none,
+            pexp_attributes: [],
+            pexp_desc:
+              Pexp_let(
+                Nonrecursive,
+                [
+                  {
+                    pvb_pat: {
+                      ppat_desc:
+                        Ppat_tuple([
+                          {
+                            ppat_desc:
+                              Ppat_var({txt: "state", loc: Location.none}),
+                            ppat_loc: Location.none,
+                            ppat_attributes: [],
+                          },
+                          {
+                            ppat_desc:
+                              Ppat_var({txt: "send", loc: Location.none}),
+                            ppat_loc: Location.none,
+                            ppat_attributes: [],
+                          },
+                        ]),
+                      ppat_loc: Location.none,
+                      ppat_attributes: [],
+                    },
+                    pvb_expr: {
+                      pexp_loc: Location.none,
+                      pexp_attributes: [],
+                      pexp_desc:
+                        Pexp_apply(
+                          {
+                            pexp_desc:
+                              Pexp_ident({
+                                txt:
+                                  Lident(
+                                    "ReactUpdate.useReducerWithMapState",
+                                  ),
+                                loc: Location.none,
+                              }),
+                            pexp_loc: Location.none,
+                            pexp_attributes: [],
+                          },
+                          [
+                            (
+                              Nolabel,
+                              {
+                                pexp_desc: initialStateFunc,
+                                pexp_loc: Location.none,
+                                pexp_attributes: [],
+                              },
+                            ),
+                            (
+                              Nolabel,
+                              {
+                                pexp_desc: reducerFunc,
+                                pexp_loc: Location.none,
+                                pexp_attributes: [],
+                              },
+                            ),
+                          ],
+                        ),
+                    },
+                    pvb_attributes: [],
+                    pvb_loc: Location.none,
+                  },
+                ],
+                {
+                  pexp_loc: Location.none,
+                  pexp_attributes: [],
+                  pexp_desc:
+                    Pexp_sequence(
+                      {
+                        pexp_loc: Location.none,
+                        pexp_attributes: [],
+                        pexp_desc:
+                          Pexp_apply(
+                            {
+                              pexp_desc:
+                                Pexp_ident({
+                                  txt: Lident("ReactCompat.useMount"),
+                                  loc: Location.none,
+                                }),
+                              pexp_loc: Location.none,
+                              pexp_attributes: [],
+                            },
+                            [
+                              (
+                                Nolabel,
+                                {
+                                  pexp_desc:
+                                    Pexp_fun(
+                                      Nolabel,
+                                      None,
+                                      {
+                                        ppat_loc: Location.none,
+                                        ppat_attributes: [],
+                                        ppat_desc:
+                                          Ppat_construct(
+                                            {
+                                              loc: Location.none,
+                                              txt: Lident("()"),
+                                            },
+                                            None,
+                                          ),
+                                      },
+                                      didMountBody,
+                                    ),
+                                  pexp_loc: Location.none,
+                                  pexp_attributes: [],
+                                },
+                              ),
+                            ],
+                          ),
+                      },
+                      body,
+                    ),
+                },
               ),
           }
         | _ => {
