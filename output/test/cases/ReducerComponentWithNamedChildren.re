@@ -6,7 +6,7 @@ type state = {count: int};
 let make = (~prop1, ~prop2=?, ~prop3=1, ~children as something, ()) => {
   let something = React.Children.toArray(something);
   let (state, send) =
-    ReactUpdate.useReducerWithMapState(
+    ReactUpdateLegacy.useReducerWithMapState(
       () => {count: prop3},
       (action, state) =>
         switch (action) {

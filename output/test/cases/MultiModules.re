@@ -6,7 +6,7 @@ module ReducerComponent = {
   [@react.component]
   let make = (~prop1, ~prop2=?, ~prop3=1, ()) => {
     let (state, send) =
-      ReactUpdate.useReducerWithMapState(
+      ReactUpdateLegacy.useReducerWithMapState(
         () => {count: prop3},
         (action, state) =>
           switch (action) {
@@ -30,7 +30,7 @@ module ReducerComponentWithChildren = {
   let make = (~prop1, ~prop2=?, ~prop3=1, ~children, ()) => {
     let children = React.Children.toArray(children);
     let (state, send) =
-      ReactUpdate.useReducerWithMapState(
+      ReactUpdateLegacy.useReducerWithMapState(
         () => {count: prop3},
         (action, state) =>
           switch (action) {

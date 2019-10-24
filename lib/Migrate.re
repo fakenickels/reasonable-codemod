@@ -310,7 +310,7 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
                               Pexp_ident({
                                 txt:
                                   Lident(
-                                    "ReactUpdate.useReducerWithMapState",
+                                    "ReactUpdateLegacy.useReducerWithMapState",
                                   ),
                                 loc: Location.none,
                               }),
@@ -437,7 +437,7 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
                               Pexp_ident({
                                 txt:
                                   Lident(
-                                    "ReactUpdate.useReducerWithMapState",
+                                    "ReactUpdateLegacy.useReducerWithMapState",
                                   ),
                                 loc: Location.none,
                               }),
