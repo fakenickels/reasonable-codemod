@@ -1,7 +1,7 @@
 # Steps for restoring project cache
 
 steps:
-  - bash: 'mkdir -p $(STAGING_DIRECTORY_UNIX)'
+  - bash: 'mkdir -p $(Build.StagingDirectory)'
     condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
     displayName: '[Cache][Publish] Create cache directory'
 
@@ -34,8 +34,8 @@ steps:
           if [[ $(curl $REST_ART) =~ (downloadUrl\":\")([^\"]*) ]]; then LATEST_ART_URL="${BASH_REMATCH[2]}"; else LATEST_ART_URL=""; fi
         }
         downloadArtifact() {
-          curl "$LATEST_ART_URL" > "${STAGING_DIRECTORY_UNIX}/$ART_NAME.zip"
-          cd $STAGING_DIRECTORY_UNIX
+          curl "$LATEST_ART_URL" > "${BUILD_STAGINGDIRECTORY}/$ART_NAME.zip"
+          cd $BUILD_STAGINGDIRECTORY
           unzip "$ART_NAME.zip"
         }
         fetchArtifactURL
@@ -62,6 +62,6 @@ steps:
 
   - bash: 'rm -rf *'
     continueOnError: true
-    workingDirectory: '$(STAGING_DIRECTORY)'
+    workingDirectory: '$(Build.StagingDirectory)'
     condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
     displayName: '[Cache][Restore] Clean up'
