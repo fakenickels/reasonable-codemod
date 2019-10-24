@@ -236,6 +236,115 @@ let rec implementionMapStructureItem = (key, mapper, item) =>
                 body,
               ),
           }
+        | [
+            (
+              {txt: Lident("initialState")},
+              {
+                pexp_desc:
+                  Pexp_fun(
+                    Nolabel,
+                    None,
+                    {ppat_desc: Ppat_construct({txt: Lident("()")}, None)},
+                    _,
+                  ) as initialStateFunc,
+              },
+            ),
+            (
+              {txt: Lident("reducer")},
+              {pexp_desc: Pexp_fun(Nolabel, None, _, _) as reducerFunc},
+            ),
+            (
+              {txt: Lident("render")},
+              {
+                pexp_desc:
+                  Pexp_fun(
+                    Nolabel,
+                    None,
+                    {ppat_desc: Ppat_record(renderDestruct, _)},
+                    body,
+                  ),
+              },
+            ),
+          ]
+            when
+              List.length(
+                renderDestruct
+                |> List.filter((({txt}, _)) => {
+                     Console.log(txt);
+                     txt == Lident("send") || txt == Lident("state");
+                   }),
+              )
+              == List.length(renderDestruct) => {
+            pexp_loc: Location.none,
+            pexp_attributes: [],
+            pexp_desc:
+              Pexp_let(
+                Nonrecursive,
+                [
+                  {
+                    pvb_pat: {
+                      ppat_desc:
+                        Ppat_tuple([
+                          {
+                            ppat_desc:
+                              Ppat_var({txt: "state", loc: Location.none}),
+                            ppat_loc: Location.none,
+                            ppat_attributes: [],
+                          },
+                          {
+                            ppat_desc:
+                              Ppat_var({txt: "send", loc: Location.none}),
+                            ppat_loc: Location.none,
+                            ppat_attributes: [],
+                          },
+                        ]),
+                      ppat_loc: Location.none,
+                      ppat_attributes: [],
+                    },
+                    pvb_expr: {
+                      pexp_loc: Location.none,
+                      pexp_attributes: [],
+                      pexp_desc:
+                        Pexp_apply(
+                          {
+                            pexp_desc:
+                              Pexp_ident({
+                                txt:
+                                  Lident(
+                                    "ReactUpdate.useReducerWithMapState",
+                                  ),
+                                loc: Location.none,
+                              }),
+                            pexp_loc: Location.none,
+                            pexp_attributes: [],
+                          },
+                          [
+                            (
+                              Nolabel,
+                              {
+                                pexp_desc: initialStateFunc,
+                                pexp_loc: Location.none,
+                                pexp_attributes: [],
+                              },
+                            ),
+                            (
+                              Nolabel,
+                              {
+                                pexp_desc: reducerFunc,
+                                pexp_loc: Location.none,
+                                pexp_attributes: [],
+                              },
+                            ),
+                          ],
+                        ),
+                    },
+                    pvb_attributes: [],
+                    pvb_loc: Location.none,
+                  },
+                ],
+                body,
+              ),
+          }
         | _ => {
             pexp_loc: Location.none,
             pexp_attributes: [],
