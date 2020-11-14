@@ -6,24 +6,17 @@
   "esy": {
     "build": "refmterr dune build",
     "NOTE": "Optional release Section. Customizes result of `esy release`",
-    "release": {
-      "bin": [
-        "Upgrade"
-      ]
-    },
+    "release": { "bin": [ "Upgrade" ] },
     "install": [
       "esy-installer bloodyowl-upgrade-reason-react.install",
       "esy-installer bloodyowl-upgrade-reason-react-tests.install"
     ]
   },
-  "scripts": {
-    "test": "esy x RunTests.exe",
-    "doc": "esy dune build @doc"
-  },
+  "scripts": { "test": "esy x RunTests.exe", "doc": "esy dune build @doc" },
   "dependencies": {
-    "@esy-ocaml/reason": ">= 3.4.0 < 3.5.0",
+    "@esy-ocaml/reason": "*",
     "@opam/dune": "^1.9.3",
-    "@opam/reason": ">= 3.4.0 < 3.5.0",
+    "@opam/reason": "3.6.2",
     "@reason-native/console": "*",
     "@reason-native/pastel": "*",
     "@reason-native/rely": "*",
