@@ -6,12 +6,12 @@ let make = (~navigation: Nautilus.StackNavigator.commonNavigation('a, 'b)) => {
 
   let ({state: onboardingState}, getOnboardingState) =
     AsyncHook.use((~cb, ()) =>
-      cb(() => PersistedKV.OnboardingState.getToken())
+      cb(() => {PersistedKV.OnboardingState.getToken()})
     );
 
   React.useEffect0(() => {
     getOnboardingState()
-    ->Promise.tapOk(data =>
+    ->Promise.tapOk(data => {
         switch (data) {
         | Some(_) =>
           navigation.push(
@@ -19,7 +19,7 @@ let make = (~navigation: Nautilus.StackNavigator.commonNavigation('a, 'b)) => {
           )
         | None => ()
         }
-      )
+      })
     |> ignore;
     None;
   });
@@ -98,13 +98,13 @@ let make = (~navigation: Nautilus.StackNavigator.commonNavigation('a, 'b)) => {
              />
              <AppButton
                style=Styles.actionButton
-               onPress={_ =>
+               onPress={_ => {
                  switch (onboardingState) {
                  | Data(Some(_data)) =>
                    navigation.push(SignUp({skipPreregister: true}))
                  | _ => navigation.push(SignUp({skipPreregister: false}))
                  }
-               }
+               }}
                loading={onboardingState->AsyncHook.isLoading}
                disabled={onboardingState->AsyncHook.isLoading}
                text={

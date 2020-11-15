@@ -2,32 +2,32 @@ module Styles = {
   open Style;
   let wrapper =
     AppConfigTypes.themeStyle((~theme) =>
-      style(~flex=1., ~backgroundColor=(theme.secondary400))
+      style([flex(1.), backgroundColor(String(theme.secondary400))])
     );
   let whoopsWrapper =
     AppConfigTypes.themeStyle((~theme) =>
-      style(
-        ~height=pt((250.)),
-        ~width=pct((80.)),
-        ~backgroundColor=(theme.background),
-        ~flexDirection=`column,
-        ~justifyContent=`spaceAround,
-        ~alignItems=`center,
-        ~padding=pt((15.)),
-        ~borderRadius=5.,
-      )
+      style([
+        height(Pt(250.)),
+        width(Pct(80.)),
+        backgroundColor(String(theme.background)),
+        flexDirection(Column),
+        justifyContent(SpaceBetween),
+        alignItems(Center),
+        padding(Pt(15.)),
+        borderRadius(5.),
+      ])
     );
   let whoopsCloseButton = style(~width=pct((100.)), ~alignSelf=`center);
   let content =
     AppConfigTypes.themeStyle((~theme) =>
-      style(
-        ~height=pct((100.)),
-        ~marginTop=pt((10.)),
-        ~paddingTop=pt((15.)),
-        ~borderTopLeftRadius=5.,
-        ~borderTopRightRadius=5.,
-        ~backgroundColor=(theme.background),
-      )
+      style([
+        height(Pct(100.)),
+        marginTop(Pt(10.)),
+        paddingTop(Pt(15.)),
+        borderTopLeftRadius(5.),
+        borderTopRightRadius(5.),
+        backgroundColor(String(theme.background)),
+      ])
     );
   let divider =
     style(
@@ -43,12 +43,12 @@ module Styles = {
   let sectionWrapper = style(~paddingLeft=pt((15.)), ~marginTop=pt((15.)));
   let sectionTitle =
     AppConfigTypes.themeStyle((~theme) =>
-      style(
-        ~color=(theme.text),
-        ~fontSize=(16.),
-        ~fontWeight=`_700,
-        ~marginBottom=pt((15.)),
-      )
+      style([
+        color(String(theme.text)),
+        fontSize(Float(16.)),
+        fontWeight(`_700),
+        marginBottom(Pt(15.)),
+      ])
     );
   let editButtonWrapper =
     style(
@@ -59,12 +59,12 @@ module Styles = {
     );
   let editButtonLabel =
     AppConfigTypes.themeStyle((~theme) =>
-      style(
-        ~fontSize=(14.),
-        ~color=(theme.text),
-        ~fontWeight=`_300,
-        ~marginLeft=pt((5.)),
-      )
+      style([
+        fontSize(Float(14.)),
+        color(String(theme.text)),
+        fontWeight(`_300),
+        marginLeft(Pt(5.)),
+      ])
     );
   let exitButtonWrapper =
     style(
@@ -75,12 +75,12 @@ module Styles = {
     );
   let exitButtonLabel =
     AppConfigTypes.themeStyle((~theme) =>
-      style(
-        ~fontSize=(14.),
-        ~color=(theme.error),
-        ~fontWeight=`_300,
-        ~marginLeft=pt((10.)),
-      )
+      style([
+        fontSize(Float(14.)),
+        color(String(theme.error)),
+        fontWeight(`_300),
+        marginLeft(Pt(10.)),
+      ])
     );
   let notificationExplanationWrapper =
     style(~flexDirection=`column, ~width=pct((80.)));
@@ -103,32 +103,32 @@ module Styles = {
     );
   let securityButtonLabel =
     AppConfigTypes.themeStyle((~theme) =>
-      style(
-        ~fontSize=(12.),
-        ~color=(theme.text),
-        ~fontWeight=`_300,
-        ~marginLeft=pt((10.)),
-      )
+      style([
+        fontSize(Float(12.)),
+        color(String(theme.text)),
+        fontWeight(`_300),
+        marginLeft(Pt(10.)),
+      ])
     );
   let link =
     AppConfigTypes.themeStyle((~theme) =>
-      style(
-        ~fontSize=(12.),
-        ~color=(theme.text),
-        ~fontWeight=`_300,
-        ~marginBottom=pt((15.)),
-      )
+      style([
+        fontSize(Float(12.)),
+        color(String(theme.text)),
+        fontWeight(`_300),
+        marginBottom(Pt(15.)),
+      ])
     );
   let appVersion =
     AppConfigTypes.themeStyle((~theme) =>
-      style(
-        ~fontSize=(10.),
-        ~color=(theme.text),
-        ~opacity=(0.3),
-        ~fontWeight=`_300,
-        ~marginBottom=pt((5.)),
-        ~marginLeft=pt((15.)),
-      )
+      style([
+        fontSize(Float(10.)),
+        color(String(theme.text)),
+        opacity(Float(0.3)),
+        fontWeight(`_300),
+        marginBottom(Pt(5.)),
+        marginLeft(Pt(15.)),
+      ])
     );
   let backdrop =
     style(
