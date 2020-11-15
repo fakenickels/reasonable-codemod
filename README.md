@@ -1,8 +1,10 @@
-# Upgrade Reason React
+# Reasonable Codemod
 
-[![Build Status](https://dev.azure.com/mlbli/Upgrade%20ReasonReact/_apis/build/status/bloodyowl.upgrade-reason-react-esy?branchName=master)](https://dev.azure.com/mlbli/Upgrade%20ReasonReact/_build/latest?definitionId=4&branchName=master)
+[Follow up the article for updates!](https://github.com/fakenickels/reasonable-codemod)
 
-Upgrade your ReasonReact codebase to 0.7.0 (the release with hooks).
+Currently it will upgrades the `Styles` of `bs-react-native-jsx3-compat` to `reason-react-native`.
+
+### readme yet to be updated
 
 ## Installation
 
