@@ -1,3 +1,4 @@
+should transform correctly › Generic test
 style(
   ~height=pt((250.)),
   ~width=pct((80.)),
@@ -47,7 +48,7 @@ module Styles = {
     style(
       ~width=pct((100.)),
       ~height=pt((StyleSheet.hairlineWidth)),
-      ~backgroundColor=("#000"),
+      ~backgroundColor=(\"#000\"),
       ~opacity=(0.1),
       (),
     );
@@ -164,7 +165,7 @@ module Styles = {
   let backdrop =
     style(
       ~flex=1.,
-      ~backgroundColor=("rgba(0, 0, 0, 0.6)"),
+      ~backgroundColor=(\"rgba(0, 0, 0, 0.6)\"),
       ~flexDirection=`column,
       ~justifyContent=`center,
       ~alignItems=`center,
