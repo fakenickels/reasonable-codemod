@@ -10,12 +10,6 @@ type moduleLocation =
   | TopLevel
   | Nested(array(string));
 
-module StringArrayMap =
-  Map.Make({
-    type t = moduleLocation;
-    let compare = compare;
-  });
-
 let printModuleLocation =
   fun
   | TopLevel => "TopLevel"
@@ -31,10 +25,10 @@ let logPrefix =
 
 let implementationRefactorMapper = {
   ...default_mapper,
-  expr: (_mapper, expression) => {
+  expr: (mapper, expression) => {
     if(Codemod.match_(expression)) {
       Codemod.mapper(expression)
-    } else expression
+    } else default_mapper.expr(mapper, expression)
   },
 };
 
@@ -109,8 +103,7 @@ let main = () => {
   switch (Sys.argv) {
   | [||]
   | [|"help" | "-help" | "--help"|] =>
-    Console.log("upgrade-reason-react");
-    Console.log("Helps you migrate ReasonReact from 0.6 to 0.7");
+    Console.log("reasonable-codemod");
     Console.log("Usage: find src/**/*.re | Upgrade");
     Console.log("Usage: pass a list of .re files you'd like to convert.");
   | args =>

@@ -1,3 +1,4 @@
+should transform correctly › It should codemod style calls inside JSX
 [@react.component]
 let make = (~navigation: Nautilus.StackNavigator.commonNavigation('a, 'b)) => {
   module AppConfig = (val AppConfigTypes.useAppConfig());
@@ -98,7 +99,7 @@ let make = (~navigation: Nautilus.StackNavigator.commonNavigation('a, 'b)) => {
                |])}
                mode=`highlight
                onPress={_ => navigation.push(SignIn)}
-               text="Entrar"
+               text=\"Entrar\"
              />
              <AppButton
                style=Styles.actionButton
@@ -113,14 +114,14 @@ let make = (~navigation: Nautilus.StackNavigator.commonNavigation('a, 'b)) => {
                disabled={onboardingState->AsyncHook.isLoading}
                text={
                  switch (onboardingState) {
-                 | Data(Some(_data)) => "Continuar abertura de conta"
+                 | Data(Some(_data)) => \"Continuar abertura de conta\"
                  | _ => {j|Abrir conta|j}
                  }
                }
                mode=`light
              />
            </View>
-           <Egg setps="TTTT" onCatch={easterEgg(~env=AppConfig.env)}>
+           <Egg setps=\"TTTT\" onCatch={easterEgg(~env=AppConfig.env)}>
              <Title
                style=sloganBottomStyle
                value={AppConfig.sayings.startupSloganBottom}

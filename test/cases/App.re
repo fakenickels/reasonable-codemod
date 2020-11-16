@@ -1,3 +1,14 @@
+style([
+  height(Pt(250.)),
+  width(Pct(80.)),
+  backgroundColor(String(theme.background)),
+  flexDirection(Column),
+  justifyContent(SpaceBetween),
+  alignItems(Center),
+  padding(Pt(15.)),
+  borderRadius(5.),
+]);
+
 module Styles = {
   open Style;
   let wrapper =
