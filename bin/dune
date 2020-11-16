@@ -1,5 +1,5 @@
 (executable
-  (package bloodyowl-upgrade-reason-react)
+  (package reasonable-codemod)
   (name Upgrade)
   (public_name Upgrade)
   (libraries lib))

@@ -8,8 +8,8 @@
     "NOTE": "Optional release Section. Customizes result of `esy release`",
     "release": { "bin": [ "Upgrade" ] },
     "install": [
-      "esy-installer bloodyowl-upgrade-reason-react.install",
-      "esy-installer bloodyowl-upgrade-reason-react-tests.install"
+      "esy-installer reasonable-codemod.install",
+      "esy-installer reasonable-codemod-tests.install"
     ]
   },
   "scripts": { "test": "esy x RunTests.exe", "doc": "esy dune build @doc" },

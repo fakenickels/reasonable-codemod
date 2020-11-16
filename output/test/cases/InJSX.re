@@ -37,12 +37,11 @@ let make = (~navigation: Nautilus.StackNavigator.commonNavigation('a, 'b)) => {
                 <>
                   <Logo
                     style=Style.(
-                      style(
-                        ~marginLeft=pt((15.)),
-                        ~width=pct((30.)),
-                        ~maxHeight=pt((200.)),
-                        (),
-                      )
+                      style([
+                        marginLeft(Pt(15.)),
+                        width(Pct(30.)),
+                        maxHeight(Pt(200.)),
+                      ])
                     )
                     mode=Logo.White
                   />
@@ -51,14 +50,13 @@ let make = (~navigation: Nautilus.StackNavigator.commonNavigation('a, 'b)) => {
               | None =>
                 <Image
                   style=Style.(
-                    style(
-                      ~maxHeight=pt((80.)),
-                      ~maxWidth=pct((90.)),
-                      ~marginTop=pt((30.)),
-                      ~marginLeft=auto,
-                      ~marginRight=auto,
-                      (),
-                    )
+                    style([
+                      maxHeight(Pt(80.)),
+                      maxWidth(Pct(90.)),
+                      marginTop(Pt(30.)),
+                      marginLeft(Auto),
+                      marginRight(Auto),
+                    ])
                   )
                   resizeMode=`contain
                   source={AppConfig.images.logoStartupTop}
@@ -68,15 +66,14 @@ let make = (~navigation: Nautilus.StackNavigator.commonNavigation('a, 'b)) => {
            <View style=Styles.actionsWrapper>
              <View
                style=Style.(
-                 style(
-                   ~width=pct((100.)),
-                   ~maxHeight=pt((400.)),
-                   ~alignItems=`center,
-                   ~justifyContent=`flexStart,
+                 style([
+                   width(Pct(100.)),
+                   maxHeight(Pt(400.)),
+                   alignItems(Center),
+                   justifyContent(FlexStart),
                    // Workaround for the messed up images to ease the floating awkwardness
-                   ~marginBottom=pt(((-10.))),
-                   (),
-                 )
+                   marginBottom(Pt(-10.)),
+                 ])
                )>
                <Image
                  source={AppConfig.images.startupLogo}
@@ -88,12 +85,11 @@ let make = (~navigation: Nautilus.StackNavigator.commonNavigation('a, 'b)) => {
                style={Style.array([|
                  Styles.actionButton,
                  Style.(
-                   style(
-                     ~backgroundColor=(
-                       AppConfig.theme.startupButtonBackgroundColor,
+                   style([
+                     backgroundColor(
+                       String(AppConfig.theme.startupButtonBackgroundColor),
                      ),
-                     (),
-                   )
+                   ])
                  ),
                |])}
                mode=`highlight

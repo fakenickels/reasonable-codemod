@@ -1,5 +1,5 @@
 (library
   (name lib)
   (flags (-w -40 -w +26))
-  (public_name bloodyowl-upgrade-reason-react.lib)
+  (public_name reasonable-codemod.lib)
   (libraries reason console.lib pastel.lib))
