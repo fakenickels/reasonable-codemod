@@ -1,6 +1,6 @@
 # Reasonable Codemod
 
-[Follow up the article for updates!](https://github.com/fakenickels/reasonable-codemod)
+[Follow up my blog for updates!](https://blog.fakenickels.dev)
 
 Currently it will upgrades the `Styles` of `bs-react-native-jsx3-compat` to `reason-react-native`.
 
