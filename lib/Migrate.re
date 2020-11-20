@@ -23,14 +23,7 @@ let printModuleLocation =
 let logPrefix =
   Pastel.(<Pastel backgroundColor=Cyan color=Black> " UpgradeRR " </Pastel>);
 
-let implementationRefactorMapper = {
-  ...default_mapper,
-  expr: (mapper, expression) => {
-    if(Codemod.match_(expression)) {
-      Codemod.mapper(expression)
-    } else default_mapper.expr(mapper, expression)
-  },
-};
+let implementationRefactorMapper = Codemod.mapper;
 
 module StringSet = Set.Make(String);
 

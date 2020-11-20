@@ -6,32 +6,17 @@ open Asttypes;
 open Parsetree;
 open Longident;
 
-let match_ = structure => {
-  switch (structure) {
-  | {
-      pexp_desc:
-        Pexp_apply(
-          {pexp_desc: Pexp_ident({txt: Lident("style")})},
-          [(Nolabel, {pexp_desc: Pexp_construct(_, Some(_))})],
-        ),
-    } =>
-    true
-  | _ => false
-  };
-};
-
-let mapper =
-  [@warning "-8"]
-  (
-    (
-      {
+let mapper = {
+  ...default_mapper,
+  expr: (mapper, expr) => {
+    switch (expr) {
+    | {
         pexp_desc:
           Pexp_apply(
             {pexp_desc: Pexp_ident({txt: Lident("style")})} as expression,
             [(Nolabel, {pexp_desc: Pexp_construct(_, Some(items))})],
           ),
-      } as structure,
-    ) => {
+      } as structure =>
       let rec mapItems = items => {
         switch (items) {
         | {pexp_desc: Pexp_tuple([prop, construct])} => [
@@ -286,6 +271,24 @@ let mapper =
                          Nolabel,
                          {
                            pexp_desc:
+                             Pexp_construct({txt: Lident("Baseline")}, _),
+                         },
+                       ),
+                     ],
+                   ),
+               } => (
+                 Labelled(name),
+                 Exp.ident({txt: Lident("`baseline"), loc: Location.none}),
+               )
+             | {
+                 pexp_desc:
+                   Pexp_apply(
+                     {pexp_desc: Pexp_ident({txt: Lident(name)})},
+                     [
+                       (
+                         Nolabel,
+                         {
+                           pexp_desc:
                              Pexp_construct({txt: Lident("Column")}, _),
                          },
                        ),
@@ -337,5 +340,7 @@ let mapper =
             |> List.append(items),
           ),
       };
-    }
-  );
+    | _ => default_mapper.expr(mapper, expr)
+    };
+  },
+};
