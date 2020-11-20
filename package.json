@@ -4,12 +4,11 @@
   "description": "An alternative upgrade script to ReasonReact 0.7.0",
   "license": "MIT",
   "esy": {
-    "build": "refmterr dune build",
+    "build": "refmterr dune build -p reasonable-codemod",
     "NOTE": "Optional release Section. Customizes result of `esy release`",
     "release": { "bin": [ "Upgrade" ] },
     "install": [
-      "esy-installer reasonable-codemod.install",
-      "esy-installer reasonable-codemod-tests.install"
+      "esy-installer reasonable-codemod.install"
     ]
   },
   "scripts": { "test": "esy x RunTests.exe", "doc": "esy dune build @doc" },
