@@ -1,3 +1,5 @@
+open BsReactNative;
+
 style([
   height(Pt(250.)),
   width(Pct(80.)),
@@ -8,6 +10,31 @@ style([
   padding(Pt(15.)),
   borderRadius(5.),
 ]);
+
+
+let images =
+  AppConfigTypes.{
+    logoStartupTop:
+      `Required(
+        BsReactNative.Packager.require("./images/logo_primary.png"),
+      ),
+    logoPrimary:
+      `Required(BsReactNative.Packager.require("./images/logo_primary.png")),
+    logoSecondary:
+      `Required(
+        BsReactNative.Packager.require("./images/logo_secondary.png"),
+      ),
+    logoPrimaryText:
+      `Required(BsReactNative.Packager.require("./images/logo_primary.png")),
+    logoSecondaryText:
+      `Required(
+        BsReactNative.Packager.require("./images/logo_secondary.png"),
+      ),
+    confirmed:
+      `Required(BsReactNative.Packager.require("./images/success.png")),
+    track: `Required(BsReactNative.Packager.require("./images/track.png")),
+    thumb: `Required(BsReactNative.Packager.require("./images/thumb.png")),
+  };
 
 module Styles = {
   open Style;

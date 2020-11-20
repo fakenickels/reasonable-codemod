@@ -7,14 +7,13 @@
     "build": "refmterr dune build -p reasonable-codemod",
     "NOTE": "Optional release Section. Customizes result of `esy release`",
     "release": { "bin": [ "codemod" ] },
-    "install": [
-      "esy-installer reasonable-codemod.install"
-    ]
+    "install": [ "esy-installer reasonable-codemod.install" ]
   },
   "scripts": { "test": "esy x RunTests.exe", "doc": "esy dune build @doc" },
   "dependencies": {
     "@esy-ocaml/reason": "*",
     "@opam/dune": "^1.9.3",
+    "@opam/ppx_tools_versioned": "5.4.0",
     "@opam/reason": "3.6.2",
     "@reason-native/console": "*",
     "@reason-native/pastel": "*",

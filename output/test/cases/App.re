@@ -1,3 +1,5 @@
+open ReactNative;
+
 style(
   ~height=pt((250.)),
   ~width=pct((80.)),
@@ -9,6 +11,42 @@ style(
   ~borderRadius=5.,
   (),
 );
+
+let images =
+  AppConfigTypes.{
+
+    logoStartupTop:
+      Image.Source.fromRequired(
+        Packager.require("./images/logo_primary.png"),
+      ),
+
+    logoPrimary:
+      Image.Source.fromRequired(
+        Packager.require("./images/logo_primary.png"),
+      ),
+
+    logoSecondary:
+      Image.Source.fromRequired(
+        Packager.require("./images/logo_secondary.png"),
+      ),
+
+    logoPrimaryText:
+      Image.Source.fromRequired(
+        Packager.require("./images/logo_primary.png"),
+      ),
+
+    logoSecondaryText:
+      Image.Source.fromRequired(
+        Packager.require("./images/logo_secondary.png"),
+      ),
+
+    confirmed:
+      Image.Source.fromRequired(Packager.require("./images/success.png")),
+
+    track: Image.Source.fromRequired(Packager.require("./images/track.png")),
+
+    thumb: Image.Source.fromRequired(Packager.require("./images/thumb.png")),
+  };
 
 module Styles = {
   open Style;

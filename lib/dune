@@ -2,4 +2,5 @@
   (name lib)
   (flags (-w -40 -w +26))
   (public_name reasonable-codemod.lib)
-  (libraries reason console.lib pastel.lib))
+  (libraries reason console.lib pastel.lib)
+  (preprocess (pps ppx_tools_versioned.metaquot_408)))

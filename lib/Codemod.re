@@ -6,6 +6,10 @@ open Asttypes;
 open Parsetree;
 open Longident;
 
+// for metaquot
+module Ast_408 = Reason_migrate_parsetree__Ast_408;
+module Migrate_parsetree__Ast_408 = Reason_migrate_parsetree__Ast_408;
+
 let mapper = {
   ...default_mapper,
   expr: (mapper, expr) => {
@@ -284,19 +288,11 @@ let mapper = {
                  pexp_desc:
                    Pexp_apply(
                      {pexp_desc: Pexp_ident({txt: Lident(name)})},
-                     [
-                       (
-                         Nolabel,
-                         {
-                           pexp_desc:
-                             Pexp_construct({txt: Lident("Column")}, _),
-                         },
-                       ),
-                     ],
+                     [(Nolabel, [%expr Column])],
                    ),
                } => (
                  Labelled(name),
-                 Exp.ident({txt: Lident("`column"), loc: Location.none}),
+                 [%expr `column],
                )
              | {
                  pexp_desc:
@@ -340,7 +336,27 @@ let mapper = {
             |> List.append(items),
           ),
       };
+
+    | [%expr Platform.os() === Android] =>
+      %expr
+      Platform.os == Platform.android
+    | [%expr Platform.os() === IOS(Phone)]
+    | [%expr Platform.os() === IOS(Pad)]
+    | [%expr Platform.os() === IOS(Tv)] =>
+      %expr
+      Platform.os == Platform.ios
+    | [%expr `Required(BsReactNative.Packager.require([%e? value]))] =>
+      %expr
+      Image.Source.fromRequired(Packager.require([%e value]))
+
     | _ => default_mapper.expr(mapper, expr)
     };
   },
+
+  structure_item: (mapper, structure_item) => {
+    switch(structure_item) {
+      | [%stri open BsReactNative;] => [%stri open ReactNative]
+      | _ => default_mapper.structure_item(mapper, structure_item)
+    }
+  }
 };
