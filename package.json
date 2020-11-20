@@ -1,7 +1,7 @@
 {
   "name": "reasonable-codemod",
-  "version": "1.0.0",
-  "description": "An alternative upgrade script to ReasonReact 0.7.0",
+  "version": "0.0.1",
+  "description": "Codemods made easy",
   "license": "MIT",
   "esy": {
     "build": "refmterr dune build -p reasonable-codemod",
