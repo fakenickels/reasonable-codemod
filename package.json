@@ -6,7 +6,7 @@
   "esy": {
     "build": "refmterr dune build -p reasonable-codemod",
     "NOTE": "Optional release Section. Customizes result of `esy release`",
-    "release": { "bin": [ "Upgrade" ] },
+    "release": { "bin": [ "codemod" ] },
     "install": [
       "esy-installer reasonable-codemod.install"
     ]

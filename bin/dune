@@ -1,5 +1,5 @@
 (executable
   (package reasonable-codemod)
   (name Upgrade)
-  (public_name Upgrade)
+  (public_name codemod)
   (libraries lib))
