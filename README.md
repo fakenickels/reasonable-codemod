@@ -14,7 +14,9 @@ $ esy add reasonable-codemod
 
 ## Usage
 
-Run the script
+```
+ls **/*.re | esy x codemod
+```
 
 [WIP]
 
