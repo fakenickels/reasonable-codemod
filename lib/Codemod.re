@@ -14,6 +14,9 @@ let mapper = {
   ...default_mapper,
   expr: (mapper, expr) => {
     switch (expr) {
+    | [%expr Style.style([])] => [%expr Style.style()]
+    | [%expr style([])] => [%expr style()]
+    | [%expr Style.combine([%e? style1], [%e? style2])] => [%expr Style.array([| [%e style1], [%e style2] |])]
     | {
         pexp_desc:
           Pexp_apply(
@@ -95,6 +98,16 @@ let mapper = {
                } => (
                  Labelled(propName),
                  value,
+               )
+
+            // font size
+             | [%expr fontWeight(`Bold)] => (
+                 Labelled("fontSize"),
+                 [%expr `bold]
+               )
+             | [%expr fontWeight(`Normal)] => (
+                 Labelled("fontSize"),
+                 [%expr `normal]
                )
 
              // dp/pt props
@@ -312,6 +325,47 @@ let mapper = {
                  Exp.ident({txt: Lident("`row"), loc: Location.none}),
                )
 
+             // Animated and Transform
+             | [%expr Transform.makeAnimated(~translateY=[%e? value], ())] => (
+                 Labelled("transform"),
+                 [%expr [|translateY(~translateY=[%e value])|]],
+               )
+             | [%expr Transform.makeAnimated(~translateX=[%e? value], ())] => (
+                 Labelled("transform"),
+                 [%expr [|translateX(~translateX=[%e value])|]],
+               )
+
+             // any(Animated(value))
+             | {
+                 pexp_desc:
+                   Pexp_apply(
+                     {pexp_desc: Pexp_ident({txt: Lident(name)})},
+                     [(Nolabel, [%expr Animated([%e? value])])],
+                   ),
+               } =>
+
+              Console.log(
+                <Pastel>
+                  "Found an animated value, mapping is not 100%. You may need to finish this by hand."
+                </Pastel>
+              );
+               let value =
+                 switch (value) {
+                 | [%expr
+                     Animated.value.interpolate(
+                       [%e? animatedValue],
+                       [%e? args],
+                     )
+                   ] =>
+                   %expr
+                   Animated.Interpolation.(
+                     [%e animatedValue]->interpolate([%e args])
+                   )
+                 | _ => value
+                 };
+
+               (Labelled(name), value);
+
              // Generic match: flex(1.0) to ~flex=1.0
              | {
                  pexp_desc:
@@ -319,7 +373,9 @@ let mapper = {
                      {pexp_desc: Pexp_ident({txt: Lident(name)})},
                      [(Nolabel, value)],
                    ),
-               } => (
+               } => 
+
+             (
                  Labelled(name),
                  value,
                )
@@ -337,26 +393,35 @@ let mapper = {
           ),
       };
 
-    | [%expr Platform.os() === Android] =>
+    | [%expr Platform.os() === Android]
+    | [%expr Platform.os() == Android] =>
       %expr
       Platform.os == Platform.android
     | [%expr Platform.os() === IOS(Phone)]
     | [%expr Platform.os() === IOS(Pad)]
-    | [%expr Platform.os() === IOS(Tv)] =>
+    | [%expr Platform.os() === IOS(Tv)]
+    | [%expr Platform.os() == IOS(Phone)]
+    | [%expr Platform.os() == IOS(Pad)]
+    | [%expr Platform.os() == IOS(Tv)] =>
       %expr
       Platform.os == Platform.ios
     | [%expr `Required(BsReactNative.Packager.require([%e? value]))] =>
       %expr
       Image.Source.fromRequired(Packager.require([%e value]))
 
+    | [%expr AsyncStorage.getItem([%e? keyName], ())] => [%expr AsyncStorage.getItem([%e keyName])]
+    | [%expr AsyncStorage.setItem([%e? keyName], [%e? keyValue], ())] => [%expr AsyncStorage.setItem([%e keyName], [%e keyValue])]
+    | [%expr AsyncStorage.removeItem([%e? keyName], ())] => [%expr AsyncStorage.removeItem([%e keyName])]
+    | [%expr Linking.removeEventListener("url", [%e? listener])] => [%expr Linking.removeEventListener(`url, [%e listener])]
+
     | _ => default_mapper.expr(mapper, expr)
     };
   },
 
   structure_item: (mapper, structure_item) => {
-    switch(structure_item) {
-      | [%stri open BsReactNative;] => [%stri open ReactNative]
-      | _ => default_mapper.structure_item(mapper, structure_item)
-    }
+    switch (structure_item) {
+    | [%stri open BsReactNative] => [%stri open ReactNative]
+    | _ => default_mapper.structure_item(mapper, structure_item)
+    };
   }
 };
