@@ -14,9 +14,15 @@ let mapper = {
   ...default_mapper,
   expr: (mapper, expr) => {
     switch (expr) {
-    | [%expr Style.style([])] => [%expr Style.style()]
-    | [%expr style([])] => [%expr style()]
-    | [%expr Style.combine([%e? style1], [%e? style2])] => [%expr Style.array([| [%e style1], [%e style2] |])]
+    | [%expr Style.style([])] =>
+      %expr
+      Style.style()
+    | [%expr style([])] =>
+      %expr
+      style()
+    | [%expr Style.combine([%e? style1], [%e? style2])] =>
+      %expr
+      Style.array([|[%e style1], [%e style2]|])
     | {
         pexp_desc:
           Pexp_apply(
@@ -100,14 +106,29 @@ let mapper = {
                  value,
                )
 
-            // font size
+             | [%expr borderStyle(Solid)] => (
+                 Labelled("borderStyle"),
+                 [%expr `solid],
+               )
+
+             // position
+             | [%expr position(Absolute)] => (
+                 Labelled("position"),
+                 [%expr `absolute],
+               )
+             | [%expr position(Relative)] => (
+                 Labelled("position"),
+                 [%expr `relative],
+               )
+
+             // font size
              | [%expr fontWeight(`Bold)] => (
                  Labelled("fontSize"),
-                 [%expr `bold]
+                 [%expr `bold],
                )
              | [%expr fontWeight(`Normal)] => (
                  Labelled("fontSize"),
-                 [%expr `normal]
+                 [%expr `normal],
                )
 
              // dp/pt props
@@ -343,12 +364,11 @@ let mapper = {
                      [(Nolabel, [%expr Animated([%e? value])])],
                    ),
                } =>
-
-              Console.log(
-                <Pastel>
-                  "Found an animated value, mapping is not 100%. You may need to finish this by hand."
-                </Pastel>
-              );
+               Console.log(
+                 <Pastel>
+                   "Found an animated value, mapping is not 100%. You may need to finish this by hand."
+                 </Pastel>,
+               );
                let value =
                  switch (value) {
                  | [%expr
@@ -373,9 +393,7 @@ let mapper = {
                      {pexp_desc: Pexp_ident({txt: Lident(name)})},
                      [(Nolabel, value)],
                    ),
-               } => 
-
-             (
+               } => (
                  Labelled(name),
                  value,
                )
@@ -405,14 +423,40 @@ let mapper = {
     | [%expr Platform.os() == IOS(Tv)] =>
       %expr
       Platform.os == Platform.ios
+    | [%expr `Required(Packager.require([%e? value]))]
     | [%expr `Required(BsReactNative.Packager.require([%e? value]))] =>
       %expr
       Image.Source.fromRequired(Packager.require([%e value]))
 
-    | [%expr AsyncStorage.getItem([%e? keyName], ())] => [%expr AsyncStorage.getItem([%e keyName])]
-    | [%expr AsyncStorage.setItem([%e? keyName], [%e? keyValue], ())] => [%expr AsyncStorage.setItem([%e keyName], [%e keyValue])]
-    | [%expr AsyncStorage.removeItem([%e? keyName], ())] => [%expr AsyncStorage.removeItem([%e keyName])]
-    | [%expr Linking.removeEventListener("url", [%e? listener])] => [%expr Linking.removeEventListener(`url, [%e listener])]
+    | [%expr AsyncStorage.getItem([%e? keyName], ())] =>
+      %expr
+      AsyncStorage.getItem([%e keyName])
+    | [%expr AsyncStorage.setItem([%e? keyName], [%e? keyValue], ())] =>
+      %expr
+      AsyncStorage.setItem([%e keyName], [%e keyValue])
+    | [%expr AsyncStorage.removeItem([%e? keyName], ())] =>
+      %expr
+      AsyncStorage.removeItem([%e keyName])
+    | [%expr Linking.removeEventListener("url", [%e? listener])] =>
+      %expr
+      Linking.removeEventListener(`url, [%e listener])
+    // Should probably check that this is in fact a labelled hitSlop param
+    | [%expr
+        {
+          "top": [%e? top],
+          "bottom": [%e? bottom],
+          "left": [%e? left],
+          "right": [%e? right],
+        }
+      ] =>
+      %expr
+      View.edgeInsets(
+        ~top=[%e top],
+        ~bottom=[%e bottom],
+        ~left=[%e left],
+        ~right=[%e right],
+        ()
+      )
 
     | _ => default_mapper.expr(mapper, expr)
     };
@@ -423,5 +467,5 @@ let mapper = {
     | [%stri open BsReactNative] => [%stri open ReactNative]
     | _ => default_mapper.structure_item(mapper, structure_item)
     };
-  }
+  },
 };
