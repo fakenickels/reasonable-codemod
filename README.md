@@ -4,6 +4,14 @@
 
 Currently it will upgrades the `Styles` of `bs-react-native-jsx3-compat` to `reason-react-native`.
 
+### todo
+
+- [x] Style
+- [x] Linking
+- [ ] Keyboard
+- [ ] Animated
+- [ ] Image & Packager
+
 ### readme yet to be updated
 
 ## Installation
