@@ -46,44 +46,31 @@ let mapper = {
       let items =
         items
         |> List.map(item => {
-             switch (item) {
              // convert color props
+             switch (item) {
              | {
                  pexp_desc:
                    Pexp_apply(
-                     {
-                       pexp_desc:
-                         Pexp_ident({
-                           txt: Lident("backgroundColor" as propName),
-                         }),
-                     },
+                     {pexp_desc: Pexp_ident({txt: Lident(propName)})},
                      [
                        (
                          Nolabel,
-                         {pexp_desc: Pexp_construct(_, Some(value))},
+                         {
+                           pexp_desc:
+                             Pexp_construct(
+                               {txt: Lident("String")},
+                               Some(value),
+                             ),
+                         },
                        ),
                      ],
                    ),
-               }
-             | {
-                 pexp_desc:
-                   Pexp_apply(
-                     {
-                       pexp_desc:
-                         Pexp_ident({txt: Lident("color" as propName)}),
-                     },
-                     [
-                       (
-                         Nolabel,
-                         {pexp_desc: Pexp_construct(_, Some(value))},
-                       ),
-                     ],
-                   ),
-               } => (
+             } => (
                  Labelled(propName),
-                 value,
+                 value
                )
 
+             // convert float
              | {
                  pexp_desc:
                    Pexp_apply(
@@ -123,11 +110,11 @@ let mapper = {
 
              // font size
              | [%expr fontWeight(`Bold)] => (
-                 Labelled("fontSize"),
+                 Labelled("fontWeight"),
                  [%expr `bold],
                )
              | [%expr fontWeight(`Normal)] => (
-                 Labelled("fontSize"),
+                 Labelled("fontWeight"),
                  [%expr `normal],
                )
 
@@ -198,6 +185,10 @@ let mapper = {
                )
 
              // convert flex props
+             | [%expr display(Flex)] => (
+                 Labelled("display"),
+                 Exp.ident({txt: Lident("`flex"), loc: Location.none}),
+               )
              | {
                  pexp_desc:
                    Pexp_apply(
@@ -381,7 +372,7 @@ let mapper = {
                    Animated.Interpolation.(
                      [%e animatedValue]->interpolate([%e args])
                    )
-                 | _ => value
+                 | _ => [%expr [%e value]->Animated.StyleProp.float]
                  };
 
                (Labelled(name), value);
@@ -411,6 +402,9 @@ let mapper = {
           ),
       };
 
+    // Animation API
+    | [%expr Animation.loop(~animation=[%e? value], ())] => [%expr Animation.loop([%e value])]
+
     | [%expr Platform.os() === Android]
     | [%expr Platform.os() == Android] =>
       %expr
@@ -426,7 +420,7 @@ let mapper = {
     | [%expr `Required(Packager.require([%e? value]))]
     | [%expr `Required(BsReactNative.Packager.require([%e? value]))] =>
       %expr
-      Image.Source.fromRequired(Packager.require([%e value]))
+      ReactNative.Image.Source.fromRequired(ReactNative.Packager.require([%e value]))
 
     | [%expr AsyncStorage.getItem([%e? keyName], ())] =>
       %expr
@@ -443,10 +437,10 @@ let mapper = {
     // Should probably check that this is in fact a labelled hitSlop param
     | [%expr
         {
-          "top": [%e? top],
-          "bottom": [%e? bottom],
-          "left": [%e? left],
-          "right": [%e? right],
+          "top": float_of_int([%e? top]),
+          "bottom": float_of_int([%e? bottom]),
+          "left": float_of_int([%e? left]),
+          "right": float_of_int([%e? right]),
         }
       ] =>
       %expr
