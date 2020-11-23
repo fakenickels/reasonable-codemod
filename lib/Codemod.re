@@ -65,9 +65,9 @@ let mapper = {
                        ),
                      ],
                    ),
-             } => (
+               } => (
                  Labelled(propName),
-                 value
+                 value,
                )
 
              // convert float
@@ -372,7 +372,9 @@ let mapper = {
                    Animated.Interpolation.(
                      [%e animatedValue]->interpolate([%e args])
                    )
-                 | _ => [%expr [%e value]->Animated.StyleProp.float]
+                 | _ =>
+                   %expr
+                   [%e value]->Animated.StyleProp.float
                  };
 
                (Labelled(name), value);
@@ -403,7 +405,9 @@ let mapper = {
       };
 
     // Animation API
-    | [%expr Animation.loop(~animation=[%e? value], ())] => [%expr Animation.loop([%e value])]
+    | [%expr Animation.loop(~animation=[%e? value], ())] =>
+      %expr
+      Animation.loop([%e value])
 
     | [%expr Platform.os() === Android]
     | [%expr Platform.os() == Android] =>
@@ -420,7 +424,9 @@ let mapper = {
     | [%expr `Required(Packager.require([%e? value]))]
     | [%expr `Required(BsReactNative.Packager.require([%e? value]))] =>
       %expr
-      ReactNative.Image.Source.fromRequired(ReactNative.Packager.require([%e value]))
+      ReactNative.Image.Source.fromRequired(
+        ReactNative.Packager.require([%e value]),
+      )
 
     | [%expr AsyncStorage.getItem([%e? keyName], ())] =>
       %expr
@@ -449,7 +455,7 @@ let mapper = {
         ~bottom=[%e bottom],
         ~left=[%e left],
         ~right=[%e right],
-        ()
+        (),
       )
 
     | _ => default_mapper.expr(mapper, expr)
