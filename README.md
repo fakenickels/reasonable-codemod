@@ -10,7 +10,7 @@ Currently it will upgrades the `Styles` of `bs-react-native-jsx3-compat` to `rea
 - [x] Linking
 - [ ] Keyboard
 - [ ] Animated
-- [ ] Image & Packager
+- [x] Image & Packager
 
 ### readme yet to be updated
 
