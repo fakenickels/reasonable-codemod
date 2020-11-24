@@ -390,7 +390,8 @@ let mapper = {
                  Labelled(name),
                  value,
                )
-             | _ => failwith("Waut")
+             | _ => 
+             failwith("Waut")
              }
            });
 
@@ -408,6 +409,12 @@ let mapper = {
     | [%expr Animation.loop(~animation=[%e? value], ())] =>
       %expr
       Animation.loop([%e value])
+
+    | [%expr Dimensions.get(`window)##width] => [%expr Dimensions.get(`window).width]
+    | [%expr Dimensions.get(`window)##height] => [%expr Dimensions.get(`window).height]
+
+    | [%expr Dimensions.get(`screen)##width] => [%expr Dimensions.get(`screen).width]
+    | [%expr Dimensions.get(`screen)##height] => [%expr Dimensions.get(`screen).height]
 
     | [%expr Platform.os() === Android]
     | [%expr Platform.os() == Android] =>
@@ -443,18 +450,18 @@ let mapper = {
     // Should probably check that this is in fact a labelled hitSlop param
     | [%expr
         {
-          "top": float_of_int([%e? top]),
-          "bottom": float_of_int([%e? bottom]),
-          "left": float_of_int([%e? left]),
-          "right": float_of_int([%e? right]),
+          "top": [%e? top],
+          "bottom": [%e? bottom],
+          "left": [%e? left],
+          "right": [%e? right],
         }
       ] =>
       %expr
       View.edgeInsets(
-        ~top=[%e top],
-        ~bottom=[%e bottom],
-        ~left=[%e left],
-        ~right=[%e right],
+        ~top=float_of_int([%e top]),
+        ~bottom=float_of_int([%e bottom]),
+        ~left=float_of_int([%e left]),
+        ~right=float_of_int([%e right]),
         (),
       )
 
