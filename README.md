@@ -2,7 +2,7 @@
 
 [Follow up my blog for updates!](https://blog.fakenickels.dev)
 
-Currently it will upgrades the `Styles` of `bs-react-native-jsx3-compat` to `reason-react-native`.
+Upgrade from `bs-react-native-jsx3-compat` to `reason-react-native`.
 
 ### todo
 
@@ -10,7 +10,11 @@ Currently it will upgrades the `Styles` of `bs-react-native-jsx3-compat` to `rea
 - [x] Linking
 - [ ] Keyboard
 - [ ] Animated
-- [x] Image & Packager
+- [ ] Image
+- [ ] Packager
+- [ ] Dimension
+- [ ] Alert
+- [ ] FlatList
 
 ### readme yet to be updated
 
