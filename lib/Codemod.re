@@ -410,6 +410,17 @@ let mapper = {
       %expr
       Animation.loop([%e value])
 
+    | [%expr Animation.loop(~animation=[%e? value], ())] =>
+      %expr
+      Animation.loop([%e value])
+    | [%expr Animated.timing(~value=[%e? value],~toValue=`raw([%e? toValue]), ~useNativeDriver=true,())] =>
+      %expr
+      Animated.timing([%e value], Animated.Value.Timing.config(~toValue=Animated.Value.Timing.fromRawValue([%e toValue]), ~useNativeDriver=true, ()))
+
+    | [%expr Animated.start([%e? animation], ~callback=[%e? callback])] =>
+      %expr
+      Animated.start([%e animation], ~endCallback=[%e callback])
+
     | [%expr Dimensions.get(`window)##width] => [%expr Dimensions.get(`window).width]
     | [%expr Dimensions.get(`window)##height] => [%expr Dimensions.get(`window).height]
 
