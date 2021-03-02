@@ -251,7 +251,7 @@ let mapper = {
                } => (
                  Labelled(name),
                  Exp.ident({
-                   txt: Lident("`spaceAround"),
+                   txt: Lident("`spaceBetween"),
                    loc: Location.none,
                  }),
                )
